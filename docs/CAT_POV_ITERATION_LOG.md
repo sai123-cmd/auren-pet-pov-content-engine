@@ -54,3 +54,16 @@ Remaining gaps:
 ## 2026-05-22 Stability Note
 
 The accepted comic direction is grounded redraw, not text-only generation. The cat v5 output used a real-scene reference board plus a Looki-like redraw prompt, and the repository now documents this as the expected comic contract in `docs/COMIC_GENERATION.md`.
+
+## 2026-05-22 Local v7
+
+Network access to Zenodo was unavailable during the final iteration window, so the run reused the local 8-video mixed source set. The cat selector was tightened to prefer unused source videos and fewer repeated event labels when candidate scores are close.
+
+Local result:
+
+- `final_content_cat_v7_source_diverse` selected 8 highlights from 7 distinct source videos.
+- It preserved the continuous first-person diary style.
+- It produced a more varied comic reference board: gravel path, tall grass, leaf ground, building threshold, upward view, and dry brush.
+- It produced a fresh vlog render with the existing MiniMax instrumental BGM.
+
+The complete generated comic sample remains the v5 assisted redraw until an image-reference generation API is wired into the open-source pipeline.

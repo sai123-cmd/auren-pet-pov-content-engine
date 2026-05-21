@@ -164,11 +164,15 @@ def enrich(row: dict[str, Any]) -> None:
 def select(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     used: set[str] = set()
     video_counts: dict[str, int] = {}
+    used_event_tokens: set[str] = set()
     selected: list[dict[str, Any]] = []
+    target_video_count = min(len({row["video_id"] for row in rows}), len(BEATS))
 
     for beat in BEATS:
         best = None
         best_score = -999.0
+        best_unused_video = None
+        best_unused_video_score = -999.0
         for row in rows:
             if row["segment_id"] in used:
                 continue
@@ -181,16 +185,35 @@ def select(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
                     score += 3.0
             if match_count == 0 and beat["key"] != "soft_ending":
                 score -= 2.5
-            score -= video_counts.get(row["video_id"], 0) * 0.8
+            score -= video_counts.get(row["video_id"], 0) * 4.0
+            if video_counts.get(row["video_id"], 0) == 0:
+                score += 1.0
+            overlap = split_labels(row.get("pet_event", "")) & used_event_tokens
+            score -= len(overlap) * 0.5
             if score > best_score:
                 best_score = score
                 best = row
+            if video_counts.get(row["video_id"], 0) == 0 and score > best_unused_video_score:
+                best_unused_video_score = score
+                best_unused_video = row
+        if best_unused_video is not None and len(video_counts) < target_video_count and best_unused_video_score >= best_score - 8.0:
+            best = best_unused_video
         if best:
             used.add(best["segment_id"])
             video_counts[best["video_id"]] = video_counts.get(best["video_id"], 0) + 1
+            used_event_tokens.update(split_labels(best.get("pet_event", "")))
             selected.append({"beat": beat, "row": best})
 
     return selected
+
+
+def split_labels(value: Any) -> set[str]:
+    labels: set[str] = set()
+    for chunk in str(value).replace(",", "|").split("|"):
+        label = chunk.strip()
+        if label:
+            labels.add(label)
+    return labels
 
 
 def public(item: dict[str, Any]) -> dict[str, Any]:
@@ -422,7 +445,8 @@ def write_review(path: Path, rows: list[dict[str, Any]], selected: list[dict[str
         "",
         f"- Processed {len(rows)} VLM-reviewed candidates and selected {len(selected)} cat-specific highlights.",
         "- Added longer CatCam clips, which improved ground patrol, distant human, field-line, and low movement examples.",
-        "- Selection is now beat-based and dynamic instead of pinned to one old sample id list.",
+        "- Selection is now beat-based, source-diverse, and dynamic instead of pinned to one old sample id list.",
+        "- When two candidates are close in score, the selector prefers an unused source video and fewer repeated event labels.",
         "- Vlog rendering handles no-audio scientific clips by creating silent beds before mixing BGM.",
         "",
         "## Selected source mix",
