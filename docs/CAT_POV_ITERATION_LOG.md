@@ -30,6 +30,7 @@ Generated local outputs:
 - `cat_comic_looki_grounded_generated_v4.png`: Looki-like grounded comic render after profile-tag scoring.
 - `cat_vlog_story_v2.mp4`: 1280x720 narrative cat POV vlog with AAC audio, about 15.8 seconds.
 - `output_quality_report.md/json`: automated output regression report.
+- `final_content_cat_v5_profile_canonical`: latest local profile-normalized output set, with `cat_comic_looki_grounded_generated_v5.png`.
 
 What improved:
 
@@ -39,6 +40,7 @@ What improved:
 - Automated QA passed for both the cat v3 output and the current dog v2 output after fixing artifact selection priority.
 - VLM job preparation now supports a `cat` profile with cat-specific label hints for stalking, hiding, threshold pauses, sudden attention, prey tracking, window watching, and brush inspection.
 - Cat content selection now understands cat-profile labels such as `prey_track`, `threshold_pause`, `sudden_attention`, `brush_inspection`, `window_watch`, `perch_or_climb`, and `ground_patrol`.
+- MiniMax result parsing now reports `parse_ok` counts explicitly and normalizes free-form model action/event text back into profile label IDs while preserving raw model text.
 
 Remaining gaps:
 

@@ -47,6 +47,8 @@ Profiles tune label hints without changing the strict output schema:
 - `dog`: dog-specific actions and events such as swim, chase, grass exploration, and human connection.
 - `cat`: cat-specific actions and events such as stalk, hide, perch, threshold pause, prey tracking, sudden attention, and brush inspection.
 
+`run_minimax_vlm_batch.py` also normalizes free-form model text back into the active profile labels. This is important because a VLM may describe an action as a sentence even when the prompt asks for label IDs.
+
 ## 5. Content Rendering
 
 Use `build_auren_content_v2_generic.py` to create:

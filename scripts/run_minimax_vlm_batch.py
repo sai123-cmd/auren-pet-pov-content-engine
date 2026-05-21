@@ -98,17 +98,47 @@ def main() -> None:
     write_json(out_dir / "minimax_vlm_results.json", existing)
     write_csv(out_dir / "minimax_vlm_results.csv", existing)
     write_review_md(out_dir / "minimax_review_summary.md", existing)
-    print(f"Done: {len(parsed_rows)} processed in this run, {len(existing)} total parsed")
+    ok_count = sum(1 for row in existing if row.get("parse_ok"))
+    failed_count = len(existing) - ok_count
+    print(f"Done: {len(parsed_rows)} processed in this run, {ok_count}/{len(existing)} parse_ok, {failed_count} failed")
 
 
 def build_strict_json_prompt(job: dict[str, Any]) -> str:
     v2 = job["v2_prelabels"]
-    return f"""Return ONLY JSON. Use exact English keys: scene, subjects, action, event, description, quality.
-All VALUES must be Simplified Chinese, not English. If any value is English, the answer is invalid.
+    profile = job.get("profile", "generic")
+    schema = profile_schema(profile)
+    return f"""Return ONLY JSON. Use exact English keys: scene, visible_subjects, pet_action, pet_event, description, quality, vlog_fit, diary_fit, comic_fit, why_memorable, diary_sentence, comic_panel_caption, corrections_to_v2.
 Analyze actual visible evidence only. quality value is one of: good, usable, bad.
+Profile: {profile}.
+For pet_action and pet_event, choose 1-3 exact label IDs from the allowed lists below. Do not write a long sentence in these two fields.
+For scene, visible_subjects, description, why_memorable, diary_sentence, and comic_panel_caption, use concise Simplified Chinese.
+Allowed visible_subjects: {json.dumps(schema["visible_subjects"], ensure_ascii=False)}.
+Allowed pet_action: {json.dumps(schema["pet_action"], ensure_ascii=False)}.
+Allowed pet_event: {json.dumps(schema["pet_event"], ensure_ascii=False)}.
 Code hints, do not copy language: scene={'|'.join(v2.get('scene', []))}; action={'|'.join(v2.get('pet_action', []))}; event={'|'.join(v2.get('pet_event', []))}; quality={v2.get('quality')}.
 Correct hints if wrong. Do not overuse run/chase; distinguish sniff/search, grass/bush, water play/swim, human following, animal/social, quiet observation, path walk, object inspection.
-Example shape: {{"scene":"河边沙滩","subjects":["水","沙滩","人"],"action":"从水里跑向岸边","event":"水边探险","description":"狗的第一视角从水面冲到岸边，水花溅起，人站在旁边。","quality":"good"}}"""
+Example shape: {{"scene":["河边沙滩"],"visible_subjects":["water","human"],"pet_action":["swim"],"pet_event":["water_adventure"],"description":"第一视角从水面冲到岸边，水花溅起，人站在旁边。","quality":"good","vlog_fit":4,"diary_fit":4,"comic_fit":3,"why_memorable":"水和人的位置变化清楚，动作有起伏。","diary_sentence":"我从水里冲出来，把岸边也踩成了浪。","comic_panel_caption":"上岸！","corrections_to_v2":["把run改为swim"]}}"""
+
+
+def profile_schema(profile: str) -> dict[str, list[str]]:
+    base_subjects = ["owner", "human", "dog", "cat", "animal", "water", "grass", "brush", "toy", "food", "ground", "building", "vehicle", "unknown"]
+    if profile == "cat":
+        return {
+            "visible_subjects": base_subjects + ["window", "shelf", "fence", "tree", "prey", "bird", "rodent", "litter_box", "scratching_post"],
+            "pet_action": ["walk", "creep", "stalk", "sniff", "search", "look_around", "look_up", "hide", "perch", "climb", "jump", "pause_observe", "approach_human", "approach_animal", "unclear"],
+            "pet_event": ["ground_patrol", "prey_track", "brush_inspection", "threshold_pause", "sudden_attention", "window_watch", "perch_or_climb", "owner_check_in", "quiet_observation", "new_scene_discovery", "sound_triggered_attention", "low_signal"],
+        }
+    if profile == "dog":
+        return {
+            "visible_subjects": base_subjects + ["leash", "river", "stick", "ball", "trail", "bench"],
+            "pet_action": ["walk", "run", "swim", "sniff", "search", "look_around", "approach_human", "approach_animal", "play", "chase", "drink", "pause_observe", "unclear"],
+            "pet_event": ["water_adventure", "grass_exploration", "search_or_inspect", "human_connection", "animal_social_moment", "run_or_chase", "quiet_observation", "new_scene_discovery", "sound_triggered_attention", "low_signal"],
+        }
+    return {
+        "visible_subjects": base_subjects,
+        "pet_action": ["walk", "run", "swim", "sniff", "search", "look_around", "approach_human", "approach_animal", "play", "pause_observe", "unclear"],
+        "pet_event": ["water_adventure", "grass_exploration", "search_or_inspect", "human_connection", "animal_social_moment", "quiet_observation", "new_scene_discovery", "sound_triggered_attention", "low_signal"],
+    }
 
 
 def build_chinese_prompt(job: dict[str, Any]) -> str:
@@ -147,6 +177,7 @@ def parse_response(job: dict[str, Any], raw_payload: dict[str, Any]) -> dict[str
         "end": job["segment"]["end"],
         "strip": job["evidence"]["strip"],
         "primary_comic_frame": job["evidence"]["primary_comic_frame"],
+        "profile": job.get("profile", "generic"),
         "v2_scene": "|".join(job["v2_prelabels"]["scene"]),
         "v2_action": "|".join(job["v2_prelabels"]["pet_action"]),
         "v2_event": "|".join(job["v2_prelabels"]["pet_event"]),
@@ -183,12 +214,21 @@ def parse_response(job: dict[str, Any], raw_payload: dict[str, Any]) -> dict[str
     if subjects in (None, "", []):
         subjects = infer_subjects(join_list(description))
 
+    profile = job.get("profile", "generic")
+    raw_action = join_list(action)
+    raw_event = join_list(event)
+    context = " ".join(join_list(x) for x in [scene, subjects, action, event, description, why]).lower()
+    normalized_action = normalize_profile_labels(profile, "pet_action", raw_action, context)
+    normalized_event = normalize_profile_labels(profile, "pet_event", raw_event, context)
+
     base.update({
         "parse_ok": True,
         "scene": join_list(scene),
         "visible_subjects": join_list(subjects),
-        "pet_action": join_list(action),
-        "pet_event": join_list(event),
+        "pet_action": "|".join(normalized_action) if normalized_action else raw_action,
+        "pet_event": "|".join(normalized_event) if normalized_event else raw_event,
+        "model_pet_action_raw": raw_action,
+        "model_pet_event_raw": raw_event,
         "description": join_list(description),
         "quality": quality,
         "vlog_fit": vlog_fit,
@@ -200,6 +240,85 @@ def parse_response(job: dict[str, Any], raw_payload: dict[str, Any]) -> dict[str
         "corrections_to_v2": join_list(corrections),
     })
     return base
+
+
+def normalize_profile_labels(profile: str, field: str, value: str, context: str) -> list[str]:
+    schema = profile_schema(profile).get(field, [])
+    value_text = value.lower()
+    combined = f"{value_text} {context}"
+    exact = [label for label in schema if label in value_text]
+    if exact:
+        return dedupe(exact)[:3]
+    if profile == "cat":
+        if field == "pet_action":
+            rules = [
+                ("look_up", ["look up", "looking up", "upward", "sky"]),
+                ("hide", ["hide", "hidden", "obscured", "under", "behind"]),
+                ("stalk", ["stalk", "prey", "rodent", "small animal", "tracking"]),
+                ("search", ["inspect", "search", "sniff", "brush", "hay", "straw", "grass"]),
+                ("creep", ["slow", "creep", "low", "through grass", "undergrowth"]),
+                ("walk", ["walk", "walking", "moving forward", "moves forward", "traversing"]),
+                ("look_around", ["look around", "turn", "pan", "scanning", "observe"]),
+                ("pause_observe", ["pause", "static", "quiet observation", "stabilizes"]),
+                ("approach_human", ["person", "human", "owner", "legs", "feet"]),
+                ("approach_animal", ["animal", "dog", "cat", "rodent", "bird"]),
+            ]
+        else:
+            rules = [
+                ("prey_track", ["prey", "rodent", "small animal", "animal interaction", "hidden movement"]),
+                ("brush_inspection", ["brush", "hay", "straw", "dry grass", "undergrowth", "foliage"]),
+                ("threshold_pause", ["building", "post", "paved", "edge", "boundary", "courtyard"]),
+                ("sudden_attention", ["quick turn", "sudden", "look up", "upward", "new view"]),
+                ("ground_patrol", ["gravel", "rocks", "stones", "ground", "field rows", "walking"]),
+                ("owner_check_in", ["owner", "person", "human", "legs", "feet"]),
+                ("quiet_observation", ["quiet", "observe", "observation", "static", "pauses"]),
+                ("new_scene_discovery", ["new scene", "discover", "reveal", "clearing", "wide-angle"]),
+            ]
+        return labels_from_rules(rules, combined)[:3]
+    if profile == "dog":
+        if field == "pet_action":
+            rules = [
+                ("swim", ["swim", "water", "river", "lake"]),
+                ("run", ["run", "running", "fast"]),
+                ("chase", ["chase", "following animal", "pursuit"]),
+                ("sniff", ["sniff", "nose", "smell"]),
+                ("search", ["search", "inspect", "grass", "bush"]),
+                ("play", ["toy", "ball", "stick", "play"]),
+                ("approach_human", ["human", "person", "owner"]),
+                ("approach_animal", ["dog", "animal"]),
+                ("walk", ["walk", "walking", "path", "trail"]),
+            ]
+        else:
+            rules = [
+                ("water_adventure", ["water", "river", "lake", "swim"]),
+                ("grass_exploration", ["grass", "bush", "sniff"]),
+                ("search_or_inspect", ["search", "inspect", "object"]),
+                ("human_connection", ["human", "person", "owner"]),
+                ("animal_social_moment", ["dog", "animal"]),
+                ("run_or_chase", ["run", "chase", "fast"]),
+                ("quiet_observation", ["quiet", "observe", "pause"]),
+                ("new_scene_discovery", ["new scene", "discover", "reveal"]),
+            ]
+        return labels_from_rules(rules, combined)[:3]
+    return []
+
+
+def labels_from_rules(rules: list[tuple[str, list[str]]], text: str) -> list[str]:
+    labels = []
+    for label, keywords in rules:
+        if any(keyword in text for keyword in keywords):
+            labels.append(label)
+    return dedupe(labels)
+
+
+def dedupe(values: list[str]) -> list[str]:
+    out = []
+    seen = set()
+    for value in values:
+        if value not in seen:
+            out.append(value)
+            seen.add(value)
+    return out
 
 
 def extract_json(text: str) -> dict[str, Any] | None:

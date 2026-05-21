@@ -174,9 +174,13 @@ def select(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 continue
             score = float(row["cat_score"])
             text = row_text(row)
+            match_count = 0
             for keyword in beat["keywords"]:
                 if keyword in text:
-                    score += 1.4
+                    match_count += 1
+                    score += 3.0
+            if match_count == 0 and beat["key"] != "soft_ending":
+                score -= 2.5
             score -= video_counts.get(row["video_id"], 0) * 0.8
             if score > best_score:
                 best_score = score
