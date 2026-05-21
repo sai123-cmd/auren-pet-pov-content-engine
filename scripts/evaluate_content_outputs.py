@@ -5,8 +5,9 @@ This is a lightweight regression check for the output standards. It does not
 judge creative quality by itself, but it catches common failure modes:
 
 - diary degraded into a scene list,
+- diary text is mojibake,
 - highlight table is missing or too repetitive,
-- comic/reference images are missing,
+- comic/reference images are missing or only a fallback storyboard exists,
 - vlog is missing video/audio streams or is too short.
 """
 
@@ -64,7 +65,8 @@ def check_diary(out_dir: Path) -> dict[str, Any]:
     bullet_lines = [line for line in lines if line.startswith(("-", "*", "1.", "2.", "3.", "4.", "5."))]
     paragraph_count = sum(1 for line in lines if not line.startswith("#") and not line.startswith(("<!--", "- ", "* ")))
     first_person_hits = sum(text.count(token) for token in ["我", "my ", "I ", "me "])
-    passed = paragraph_count >= 4 and first_person_hits >= 5 and len(bullet_lines) <= 2
+    mojibake_hits = sum(text.count(token) for token in ["锛", "绗", "鎴", "璺", "鈥", "�"])
+    passed = paragraph_count >= 4 and first_person_hits >= 5 and len(bullet_lines) <= 2 and mojibake_hits == 0
     return {
         "name": "diary",
         "passed": passed,
@@ -72,7 +74,8 @@ def check_diary(out_dir: Path) -> dict[str, Any]:
         "paragraph_count": paragraph_count,
         "first_person_hits": first_person_hits,
         "bullet_lines": len(bullet_lines),
-        "message": "Diary looks like a continuous first-person story." if passed else "Diary may have regressed into a list/report or lacks first-person voice.",
+        "mojibake_hits": mojibake_hits,
+        "message": "Diary looks like a continuous first-person story." if passed else "Diary may have regressed into a list/report, lacks first-person voice, or contains mojibake.",
     }
 
 
@@ -87,7 +90,15 @@ def check_highlights(out_dir: Path, min_highlights: int) -> dict[str, Any]:
     events = unique_nonempty(rows, "event")
     if not events:
         events = unique_nonempty(rows, "pet_event")
-    passed = len(rows) >= min_highlights and len(sections) >= min(4, min_highlights) and len(videos) >= 2
+    rows_with_source = sum(1 for row in rows if (row.get("video_name") or row.get("source_path") or row.get("video_id") or "").strip())
+    min_events = min(3, min_highlights)
+    passed = (
+        len(rows) >= min_highlights
+        and len(sections) >= min(4, min_highlights)
+        and len(videos) >= 2
+        and len(events) >= min_events
+        and rows_with_source == len(rows)
+    )
     return {
         "name": "highlights",
         "passed": passed,
@@ -96,7 +107,8 @@ def check_highlights(out_dir: Path, min_highlights: int) -> dict[str, Any]:
         "unique_sections": len(sections),
         "unique_videos": len(videos),
         "unique_events": len(events),
-        "message": "Highlight table has enough diversity." if passed else "Highlight table is missing, too short, or dominated by one source/section.",
+        "rows_with_source": rows_with_source,
+        "message": "Highlight table has enough diversity and source attribution." if passed else "Highlight table is missing, too short, too repetitive, or lacks source attribution.",
     }
 
 
@@ -115,10 +127,12 @@ def check_images(out_dir: Path) -> dict[str, Any]:
                 width, height = img.size
             if label == "comic":
                 ok = width >= 900 and height >= 700
+                if is_fallback_comic(path):
+                    ok = False
             else:
                 ok = width >= 900 and height >= 500
             passed = passed and ok
-            details.append({"label": label, "path": str(path), "ok": ok, "width": width, "height": height})
+            details.append({"label": label, "path": str(path), "ok": ok, "width": width, "height": height, "fallback": is_fallback_comic(path) if label == "comic" else False})
         except Exception as exc:
             passed = False
             details.append({"label": label, "path": str(path), "ok": False, "error": str(exc)})
@@ -126,7 +140,7 @@ def check_images(out_dir: Path) -> dict[str, Any]:
         "name": "images",
         "passed": passed,
         "details": details,
-        "message": "Comic/reference images exist at usable resolution." if passed else "Comic/reference image check failed.",
+        "message": "Comic/reference images exist at usable resolution." if passed else "Comic/reference image check failed or only a fallback comic is present.",
     }
 
 
@@ -204,6 +218,11 @@ def unique_nonempty(rows: list[dict[str, str]], key: str) -> set[str]:
         if value:
             values.add(value)
     return values
+
+
+def is_fallback_comic(path: Path) -> bool:
+    name = path.name.lower()
+    return any(token in name for token in ["fallback", "contact_sheet", "storyboard", "reference"])
 
 
 def fail(name: str, message: str) -> dict[str, Any]:
