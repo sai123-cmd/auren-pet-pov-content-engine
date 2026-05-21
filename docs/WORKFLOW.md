@@ -1,5 +1,18 @@
 # Workflow
 
+## 0. One-Command Run
+
+Use the orchestrator for normal local runs:
+
+```bash
+python scripts/run_auren_pipeline.py \
+  --source-dir /path/to/pet_pov_videos \
+  --output-dir outputs/run_001 \
+  --profile cat
+```
+
+Add `--run-vlm --build-content` when MiniMax credentials are available and you want final content in the same command.
+
 ## 1. Inventory
 
 Use `prepare_pov_eval_pack.py` to inspect source videos, extract keyframes, and produce a manifest.

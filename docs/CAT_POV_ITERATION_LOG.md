@@ -41,6 +41,7 @@ What improved:
 - VLM job preparation now supports a `cat` profile with cat-specific label hints for stalking, hiding, threshold pauses, sudden attention, prey tracking, window watching, and brush inspection.
 - Cat content selection now understands cat-profile labels such as `prey_track`, `threshold_pause`, `sudden_attention`, `brush_inspection`, `window_watch`, `perch_or_climb`, and `ground_patrol`.
 - MiniMax result parsing now reports `parse_ok` counts explicitly and normalizes free-form model action/event text back into profile label IDs while preserving raw model text.
+- Added `run_auren_pipeline.py` as a one-command orchestrator. Smoke tested the no-VLM cat path on the mixed local cat source set.
 
 Remaining gaps:
 

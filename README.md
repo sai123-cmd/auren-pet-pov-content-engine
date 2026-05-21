@@ -46,6 +46,15 @@ Make sure `ffmpeg` and `ffprobe` are available on `PATH`.
 Prepare a POV evaluation pack:
 
 ```bash
+python scripts/run_auren_pipeline.py \
+  --source-dir /path/to/pet_pov_videos \
+  --output-dir outputs/run_001 \
+  --profile cat
+```
+
+Or run each step manually:
+
+```bash
 python scripts/prepare_pov_eval_pack.py \
   --source-dir /path/to/pet_pov_videos \
   --output-dir outputs/run_001 \
@@ -85,6 +94,18 @@ export MINIMAX_API_KEY=...
 python scripts/run_minimax_vlm_batch.py \
   --jobs outputs/run_001/vlm_jobs_v3/vlm_jobs.jsonl \
   --output-dir outputs/run_001/minimax_vlm_v1
+```
+
+One-command MiniMax + content generation:
+
+```bash
+MINIMAX_API_KEY=... python scripts/run_auren_pipeline.py \
+  --source-dir /path/to/pet_pov_videos \
+  --output-dir outputs/cat_run \
+  --profile cat \
+  --run-vlm \
+  --build-content \
+  --bgm outputs/cat_run/cat_bgm.mp3
 ```
 
 Build content outputs:
