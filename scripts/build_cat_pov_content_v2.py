@@ -25,7 +25,7 @@ BEATS = [
         "key": "ground_departure",
         "section": "贴地出发",
         "caption": "地面先向我报到。",
-        "keywords": ["legs", "people", "field", "walking forward", "rough terrain", "low angle", "animal"],
+        "keywords": ["ground_patrol", "legs", "people", "field", "walking forward", "rough terrain", "low angle", "animal", "rock", "stone"],
     },
     {
         "key": "field_lines",
@@ -37,31 +37,31 @@ BEATS = [
         "key": "leaf_prey",
         "section": "落叶线索",
         "caption": "那边动了一下。",
-        "keywords": ["leaf", "wooded", "squirrel", "rodent", "small animal", "scurries", "pans right"],
+        "keywords": ["prey_track", "prey", "leaf", "wooded", "squirrel", "rodent", "small animal", "scurries", "pans right"],
     },
     {
         "key": "threshold_cross",
         "section": "边界穿行",
         "caption": "开阔地要快点过。",
-        "keywords": ["building", "post", "ground-level", "forward", "outdoor area", "courtyard"],
+        "keywords": ["threshold_pause", "building", "post", "ground-level", "forward", "outdoor area", "courtyard"],
     },
     {
         "key": "sudden_attention",
         "section": "突然抬头",
         "caption": "上面也有消息。",
-        "keywords": ["looking up", "tilts upward", "turn", "post", "sky", "quick move"],
+        "keywords": ["sudden_attention", "look_up", "looking up", "tilts upward", "turn", "post", "sky", "quick move"],
     },
     {
         "key": "brush_rustle",
         "section": "草堆沙沙",
         "caption": "答案躲在干草里。",
-        "keywords": ["dry grass", "twigs", "hay", "straw", "foliage", "brush"],
+        "keywords": ["brush_inspection", "hide", "dry grass", "twigs", "hay", "straw", "foliage", "brush"],
     },
     {
         "key": "close_watch",
         "section": "低处盯梢",
         "caption": "我只靠近一点，再靠近一点。",
-        "keywords": ["forest floor", "burrowing", "forage", "close-up", "obscured", "quiet observation"],
+        "keywords": ["quiet_observation", "stalk", "forest floor", "burrowing", "forage", "close-up", "obscured", "quiet observation"],
     },
     {
         "key": "soft_ending",
@@ -131,18 +131,22 @@ def enrich(row: dict[str, Any]) -> None:
     tags: list[str] = []
     if any(w in text for w in ["leaf", "wooded", "forest", "rocky"]):
         tags.append("林地/落叶")
-    if any(w in text for w in ["small animal", "squirrel", "rodent", "scurries", "movement within"]):
+    if any(w in text for w in ["rock", "stone", "pavement", "rough terrain"]):
+        tags.append("碎石/地面")
+    if any(w in text for w in ["prey_track", "prey", "small animal", "squirrel", "rodent", "scurries", "movement within"]):
         tags.append("猎物注意")
     if any(w in text for w in ["people", "human", "person"]):
         tags.append("远处有人")
     if any(w in text for w in ["field", "garden", "soil", "rows", "vegetation"]):
         tags.append("田地/草地")
-    if any(w in text for w in ["building", "courtyard", "post", "paved"]):
+    if any(w in text for w in ["threshold_pause", "building", "courtyard", "post", "paved"]):
         tags.append("边界/建筑")
-    if any(w in text for w in ["looking up", "tilts upward", "sky", "quick move", "turn"]):
+    if any(w in text for w in ["sudden_attention", "look_up", "looking up", "tilts upward", "sky", "quick move", "turn"]):
         tags.append("突然抬头")
-    if any(w in text for w in ["dry grass", "twigs", "hay", "straw", "brush", "foliage"]):
+    if any(w in text for w in ["brush_inspection", "hide", "dry grass", "twigs", "hay", "straw", "brush", "foliage"]):
         tags.append("草堆/躲藏")
+    if any(w in text for w in ["perch_or_climb", "perch", "climb", "window_watch", "window"]):
+        tags.append("高处/窗边")
     if "catcam" in text:
         tags.append("CatCam新增素材")
     row["cat_tags"] = tags or ["低位观察"]
@@ -152,6 +156,8 @@ def enrich(row: dict[str, Any]) -> None:
     bonus += 0.9 if "猎物注意" in tags else 0.0
     bonus += 0.7 if "远处有人" in tags else 0.0
     bonus += 0.6 if "草堆/躲藏" in tags else 0.0
+    bonus += 0.5 if "碎石/地面" in tags else 0.0
+    bonus += 0.5 if "高处/窗边" in tags else 0.0
     row["cat_score"] = base + bonus
 
 

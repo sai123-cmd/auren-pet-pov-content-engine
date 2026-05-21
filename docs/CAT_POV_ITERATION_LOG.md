@@ -27,7 +27,7 @@ Generated local outputs:
 - `cat_diary_story_v2.md`: continuous first-person cat diary.
 - `cat_pov_highlights_v2.csv`: selected highlights and VLM evidence.
 - `cat_comic_reference_real_scenes_v2.jpg`: real-frame grounding board.
-- `cat_comic_looki_grounded_generated_v3.png`: Looki-like grounded comic render.
+- `cat_comic_looki_grounded_generated_v4.png`: Looki-like grounded comic render after profile-tag scoring.
 - `cat_vlog_story_v2.mp4`: 1280x720 narrative cat POV vlog with AAC audio, about 15.8 seconds.
 - `output_quality_report.md/json`: automated output regression report.
 
@@ -38,6 +38,7 @@ What improved:
 - The vlog renderer handled no-audio scientific footage by creating a silent bed before BGM mixing.
 - Automated QA passed for both the cat v3 output and the current dog v2 output after fixing artifact selection priority.
 - VLM job preparation now supports a `cat` profile with cat-specific label hints for stalking, hiding, threshold pauses, sudden attention, prey tracking, window watching, and brush inspection.
+- Cat content selection now understands cat-profile labels such as `prey_track`, `threshold_pause`, `sudden_attention`, `brush_inspection`, `window_watch`, `perch_or_climb`, and `ground_patrol`.
 
 Remaining gaps:
 
