@@ -18,6 +18,7 @@ The demo is not considered successful just because it produces files. AUREN uses
 
 See [docs/OUTPUT_STANDARDS.md](docs/OUTPUT_STANDARDS.md).
 For the grounded comic generation contract, see [docs/COMIC_GENERATION.md](docs/COMIC_GENERATION.md).
+For automated regression checks, see [docs/EVALUATION.md](docs/EVALUATION.md).
 For footage acquisition and licensing boundaries, see [docs/SOURCE_ACQUISITION.md](docs/SOURCE_ACQUISITION.md).
 
 ## Pipeline

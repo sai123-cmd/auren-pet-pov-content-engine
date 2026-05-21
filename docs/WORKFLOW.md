@@ -106,6 +106,7 @@ For final comic rendering, follow `docs/COMIC_GENERATION.md`. The local pipeline
 ## 6. Human Acceptance
 
 Human review should check output quality against `docs/OUTPUT_STANDARDS.md`, not just file existence.
+For the automated/human review split, see `docs/EVALUATION.md`.
 
 Use `evaluate_content_outputs.py` before handoff:
 
