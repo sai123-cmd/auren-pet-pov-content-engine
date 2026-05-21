@@ -108,6 +108,8 @@ MINIMAX_API_KEY=... python scripts/run_auren_pipeline.py \
   --bgm outputs/cat_run/cat_bgm.mp3
 ```
 
+Run `evaluate_content_outputs.py` after the final comic image has been generated or copied into the final content folder.
+
 Build content outputs:
 
 ```bash

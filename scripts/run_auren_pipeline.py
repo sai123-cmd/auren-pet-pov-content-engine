@@ -31,6 +31,7 @@ def main() -> None:
     parser.add_argument("--per-mode", type=int, default=36)
     parser.add_argument("--run-vlm", action="store_true")
     parser.add_argument("--build-content", action="store_true")
+    parser.add_argument("--evaluate", action="store_true", help="Run output QA after content build. Requires final comic assets to exist.")
     parser.add_argument("--results", default="", help="Existing MiniMax result JSON, used when --build-content is set without --run-vlm.")
     parser.add_argument("--bgm", default="")
     args = parser.parse_args()
@@ -78,7 +79,8 @@ def main() -> None:
             run_py(*cmd)
         else:
             run_py("build_auren_content_v2_generic.py", "--results", results, "--manifest", out_dir / "manifest.csv", "--output-dir", final_dir)
-        run_py("evaluate_content_outputs.py", "--output-dir", final_dir, "--write-report")
+        if args.evaluate:
+            run_py("evaluate_content_outputs.py", "--output-dir", final_dir, "--write-report")
 
     print("AUREN pipeline complete", flush=True)
     print(f"- output_dir: {out_dir}", flush=True)
