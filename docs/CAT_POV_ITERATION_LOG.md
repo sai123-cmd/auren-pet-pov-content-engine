@@ -29,12 +29,14 @@ Generated local outputs:
 - `cat_comic_reference_real_scenes_v2.jpg`: real-frame grounding board.
 - `cat_comic_looki_grounded_generated_v3.png`: Looki-like grounded comic render.
 - `cat_vlog_story_v2.mp4`: 1280x720 narrative cat POV vlog with AAC audio, about 15.8 seconds.
+- `output_quality_report.md/json`: automated output regression report.
 
 What improved:
 
 - More scene diversity: rocks, field rows, human legs in distance, apartment boundary, dry brush, sudden head turn, and ground-level movement.
 - The v2 cat builder selected a broader cat-style arc instead of repeating one short clip.
 - The vlog renderer handled no-audio scientific footage by creating a silent bed before BGM mixing.
+- Automated QA passed for both the cat v3 output and the current dog v2 output after fixing artifact selection priority.
 
 Remaining gaps:
 

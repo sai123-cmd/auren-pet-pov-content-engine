@@ -95,6 +95,14 @@ python scripts/build_auren_content_v2_generic.py \
   --output-dir outputs/run_001/final_content_v2
 ```
 
+Evaluate generated outputs against basic regression checks:
+
+```bash
+python scripts/evaluate_content_outputs.py \
+  --output-dir outputs/run_001/final_content_v2 \
+  --write-report
+```
+
 For cat-specific POV runs, use the dedicated builder:
 
 ```bash

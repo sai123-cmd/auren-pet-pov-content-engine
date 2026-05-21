@@ -65,3 +65,18 @@ python scripts/convert_catcam_tar_to_mp4.py \
 ## 6. Human Acceptance
 
 Human review should check output quality against `docs/OUTPUT_STANDARDS.md`, not just file existence.
+
+Use `evaluate_content_outputs.py` before handoff:
+
+```bash
+python scripts/evaluate_content_outputs.py \
+  --output-dir outputs/run_001/final_content_v2 \
+  --write-report
+```
+
+The evaluator checks for common regressions:
+
+- diary is a continuous first-person story rather than a scene list,
+- highlights have enough sections and source diversity,
+- the final comic/reference images exist at usable resolution,
+- the rendered vlog has video, audio, and enough duration.
