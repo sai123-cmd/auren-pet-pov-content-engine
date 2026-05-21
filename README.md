@@ -83,8 +83,7 @@ Run MiniMax VLM batch:
 export MINIMAX_API_KEY=...
 python scripts/run_minimax_vlm_batch.py \
   --jobs outputs/run_001/vlm_jobs_v3/vlm_jobs.jsonl \
-  --output-dir outputs/run_001/minimax_vlm_v1 \
-  --api-key "$MINIMAX_API_KEY"
+  --output-dir outputs/run_001/minimax_vlm_v1
 ```
 
 Build content outputs:
@@ -94,6 +93,16 @@ python scripts/build_auren_content_v2_generic.py \
   --results outputs/run_001/minimax_vlm_v1/minimax_vlm_results.json \
   --manifest outputs/run_001/manifest.csv \
   --output-dir outputs/run_001/final_content_v2
+```
+
+For cat-specific POV runs, use the dedicated builder:
+
+```bash
+python scripts/build_cat_pov_content_v2.py \
+  --results outputs/cat_run/minimax_vlm_v1/minimax_vlm_results.json \
+  --manifest outputs/cat_run/manifest.csv \
+  --output-dir outputs/cat_run/final_content_cat_v2 \
+  --bgm outputs/cat_run/cat_bgm.mp3
 ```
 
 ## Dog POV Example
@@ -127,6 +136,8 @@ Key files:
 - `assets/cat_vlog_contact_sheet_v1.jpg`
 - `assets/cat_vlog_story_v1.mp4`
 - `cat_pov_self_evaluation_v1.md`
+
+An additional local CatCam iteration was tested with longer academic-use-only cat-mounted videos from Zenodo. Those derived media are not committed because the dataset is CC BY-NC / academic use only, but the v2 cat builder and source notes are included so the workflow can be repeated with licensed material.
 
 ## Safety and Licensing
 

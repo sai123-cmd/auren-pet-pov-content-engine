@@ -43,7 +43,17 @@ Use `build_auren_content_v2_generic.py` to create:
 - storyboard dashboard,
 - rendered vlog.
 
+For cat POV, use `build_cat_pov_content_v2.py`. It selects cat-specific beats rather than dog-style action beats:
+
+- ground patrol,
+- field or threshold crossing,
+- prey or rustle attention,
+- sudden head turn,
+- brush or hiding inspection,
+- quiet ending.
+
+The cat builder also handles no-audio scientific footage by creating a silent bed before mixing BGM, so CatCam-like data can still produce a watchable vlog.
+
 ## 6. Human Acceptance
 
 Human review should check output quality against `docs/OUTPUT_STANDARDS.md`, not just file existence.
-
