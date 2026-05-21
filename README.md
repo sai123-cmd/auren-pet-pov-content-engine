@@ -108,9 +108,28 @@ The repository includes a small example output pack under [examples/dog_pov_test
 
 Raw source videos are not included.
 
+## Cat POV Example
+
+The repository also includes a cat-specific evaluation pack under [examples/cat_pov_eval_001](examples/cat_pov_eval_001).
+
+This run uses openly licensed Wikimedia Commons supplementary videos from Lesica et al. 2006. The source clips are short, monochrome, and low resolution, so the cat workflow is intentionally different from the dog workflow:
+
+- diary: quiet stalking/observation voice, not a dog-style outing,
+- highlights: leaf-floor scanning, prey attention, sudden upward attention, brush/nest investigation,
+- comic: black-and-white cat POV redraw with whisker radar, scent lines, and blank thought bubbles,
+- vlog: short suspenseful observation edit.
+
+Key files:
+
+- `cat_diary_story_v1.md`
+- `cat_pov_highlights_v1.csv`
+- `assets/cat_comic_looki_grounded_generated.png`
+- `assets/cat_vlog_contact_sheet_v1.jpg`
+- `assets/cat_vlog_story_v1.mp4`
+- `cat_pov_self_evaluation_v1.md`
+
 ## Safety and Licensing
 
 Do not commit API keys, private videos, copyrighted source footage, or user-identifying raw media. For public demos, use your own footage or openly licensed videos with clear attribution.
 
 This repository contains pipeline code and generated examples only.
-
