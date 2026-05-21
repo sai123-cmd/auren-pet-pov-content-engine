@@ -28,6 +28,8 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output-dir", required=True)
     parser.add_argument("--min-highlights", type=int, default=6)
+    parser.add_argument("--min-videos", type=int, default=2)
+    parser.add_argument("--min-events", type=int, default=3)
     parser.add_argument("--min-vlog-duration", type=float, default=8.0)
     parser.add_argument("--write-report", action="store_true")
     args = parser.parse_args()
@@ -42,7 +44,7 @@ def main() -> None:
         "summary": {},
     }
     report["checks"].append(check_diary(out_dir))
-    report["checks"].append(check_highlights(out_dir, args.min_highlights))
+    report["checks"].append(check_highlights(out_dir, args.min_highlights, args.min_videos, args.min_events))
     report["checks"].append(check_images(out_dir))
     report["checks"].append(check_vlog(out_dir, args.min_vlog_duration))
     report["summary"]["passed"] = all(check["passed"] for check in report["checks"])
@@ -79,7 +81,7 @@ def check_diary(out_dir: Path) -> dict[str, Any]:
     }
 
 
-def check_highlights(out_dir: Path, min_highlights: int) -> dict[str, Any]:
+def check_highlights(out_dir: Path, min_highlights: int, min_videos: int, min_events: int) -> dict[str, Any]:
     path = find_first(out_dir, ["*highlights*.csv", "*recognition*.csv"])
     if not path:
         return fail("highlights", "No highlight CSV found.")
@@ -91,11 +93,11 @@ def check_highlights(out_dir: Path, min_highlights: int) -> dict[str, Any]:
     if not events:
         events = unique_nonempty(rows, "pet_event")
     rows_with_source = sum(1 for row in rows if (row.get("video_name") or row.get("source_path") or row.get("video_id") or "").strip())
-    min_events = min(3, min_highlights)
+    min_events = min(min_events, min_highlights)
     passed = (
         len(rows) >= min_highlights
         and len(sections) >= min(4, min_highlights)
-        and len(videos) >= 2
+        and len(videos) >= min_videos
         and len(events) >= min_events
         and rows_with_source == len(rows)
     )
@@ -108,6 +110,8 @@ def check_highlights(out_dir: Path, min_highlights: int) -> dict[str, Any]:
         "unique_videos": len(videos),
         "unique_events": len(events),
         "rows_with_source": rows_with_source,
+        "min_videos": min_videos,
+        "min_events": min_events,
         "message": "Highlight table has enough diversity and source attribution." if passed else "Highlight table is missing, too short, too repetitive, or lacks source attribution.",
     }
 

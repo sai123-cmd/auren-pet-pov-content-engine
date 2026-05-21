@@ -136,6 +136,16 @@ python scripts/evaluate_content_outputs.py \
   --write-report
 ```
 
+Use stricter diversity thresholds for larger validation runs:
+
+```bash
+python scripts/evaluate_content_outputs.py \
+  --output-dir outputs/cat_run/final_content_cat_v2 \
+  --min-videos 6 \
+  --min-events 5 \
+  --write-report
+```
+
 For cat-specific POV runs, use the dedicated builder:
 
 ```bash
