@@ -43,6 +43,7 @@ What improved:
 - MiniMax result parsing now reports `parse_ok` counts explicitly and normalizes free-form model action/event text back into profile label IDs while preserving raw model text.
 - Added `run_auren_pipeline.py` as a one-command orchestrator. Smoke tested the no-VLM cat path on the mixed local cat source set.
 - Added source acquisition policy and source manifest template so future cat/dog material is separated into open-demo, local-validation, and authorization-candidate tiers.
+- Generated MiniMax instrumental BGM for the latest cat v5 vlog and added a reusable `generate_minimax_bgm.py` wrapper.
 
 Remaining gaps:
 

@@ -14,6 +14,13 @@ python scripts/run_auren_pipeline.py \
 Add `--run-vlm --build-content` when MiniMax credentials are available and you want final content in the same command.
 Run `--evaluate` only after the final comic image exists in the content folder, because the current comic generation step is still image-model assisted rather than deterministic local rendering.
 
+Optional BGM:
+
+```bash
+MINIMAX_API_KEY=... python scripts/generate_minimax_bgm.py \
+  --out outputs/run_001/bgm.mp3
+```
+
 ## 1. Inventory
 
 Use `prepare_pov_eval_pack.py` to inspect source videos, extract keyframes, and produce a manifest.
