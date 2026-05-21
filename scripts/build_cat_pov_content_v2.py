@@ -72,6 +72,31 @@ BEATS = [
 ]
 
 
+TAG_DIARY_PHRASES = {
+    "碎石/地面": "脚下碎石的响动",
+    "猎物注意": "草叶后面那点小动静",
+    "林地/落叶": "落叶底下的暗号",
+    "远处有人": "远处人类的脚步",
+    "田地/草地": "田垄和草坡的路线",
+    "边界/建筑": "建筑边缘的安全线",
+    "突然抬头": "头顶忽然传来的消息",
+    "草堆/躲藏": "干草堆里的沙沙声",
+    "高处/窗边": "高处投下来的线索",
+}
+
+
+BEAT_TAG_PRIORITY = {
+    "ground_departure": ["碎石/地面", "远处有人", "田地/草地"],
+    "field_lines": ["田地/草地", "猎物注意", "远处有人"],
+    "leaf_prey": ["猎物注意", "林地/落叶", "草堆/躲藏"],
+    "threshold_cross": ["边界/建筑", "远处有人", "林地/落叶"],
+    "sudden_attention": ["突然抬头", "边界/建筑", "高处/窗边"],
+    "brush_rustle": ["草堆/躲藏", "猎物注意", "碎石/地面"],
+    "close_watch": ["猎物注意", "林地/落叶", "草堆/躲藏"],
+    "soft_ending": ["边界/建筑", "远处有人", "林地/落叶"],
+}
+
+
 def main() -> None:
     try:
         sys.stdout.reconfigure(encoding="utf-8")
@@ -238,22 +263,85 @@ def public(item: dict[str, Any]) -> dict[str, Any]:
 
 
 def write_diary(path: Path, selected: list[dict[str, Any]]) -> None:
-    pieces = {item["beat"]["key"]: item for item in selected}
-    text = f"""# 今天，地面把秘密递给了我
+    by_key = {item["beat"]["key"]: item for item in selected}
+    first = selected[0] if selected else None
+    middle = selected[1:5]
+    late = selected[5:]
+    tags = ordered_tags(selected)
+    videos = {item["row"].get("video_name_clean", "") for item in selected if item["row"].get("video_name_clean")}
 
-今天我出门的时候，没有宣布。猫做重要的事通常不宣布。我先让镜头贴近地面，让草尖、土块和远处人的脚步自己出现。地上有黑白的纹路，像一张没有人类标注的地图；我从里面挑了一条只有胡须知道的路，轻轻往前走。
+    title = diary_title(tags)
+    opening_detail = beat_phrase(first) if first else "地面先把今天的消息递到我鼻子前"
+    middle_details = "、".join(beat_phrase(item) for item in middle[:3]) or "几条只有猫才会认真看的线索"
+    late_details = "、".join(beat_phrase(item) for item in late[:2]) or "最后那点安静的尾巴"
+    prey_line = event_sentence(by_key, ["leaf_prey", "brush_rustle", "close_watch"])
+    boundary_line = event_sentence(by_key, ["threshold_cross", "sudden_attention"])
 
-我经过田地和草坡的时候，远处有人在移动，天空很亮，地面却更会说话。那些一行一行的泥土和植物把路线铺开，我把身体放低，像把自己折进影子里。人类看见的也许只是晃动的画面，我看见的是风从哪里来、谁刚刚踩过、哪一块地方不该久留。
+    paragraphs = [
+        f"# {title}",
+        "",
+        f"今天我出门的时候，没有宣布。猫做重要的事通常不宣布。我先把世界放到很低的位置，{opening_detail}。人类也许只会说“它在走路”，可我知道这叫开卷考试：每一粒石头、每一根草、每一个远处移动的影子，都可能把答案递给我。",
+        "",
+        f"我一路把胡须调到侦探模式，先检查{middle_details}。这些东西看起来不大声，却很会说话。风从哪里来，谁刚刚经过，哪片地方适合快点穿过，哪片地方值得多停半拍，地面全都写着，只是字太小，人类读不出来。",
+        "",
+        prey_line,
+        "",
+        boundary_line,
+        "",
+        f"后来，今天的线索慢慢收束成{late_details}。我没有急着宣布胜利，猫的胜利通常也不宣布。我只是把爪子放轻，把镜头贴近，把那些沙沙声、亮光、边界和藏起来的小动静一件件收进身体里。",
+        "",
+        f"所以今天的高光不是大声发生的。它们来自{len(selected)}个片段、{len(videos)}个视角来源，还有我一路保持的低处判断力。等人类回放时，也许终于会明白：我的一天不是散步，是一场贴着地面进行的秘密调查。",
+    ]
+    path.write_text("\n".join(paragraphs), encoding="utf-8")
 
-然后，落叶那边动了一下。很小，很快，像一句话只说了半个字。我没有马上扑过去，只把注意力推到前面：树根、石头、枯叶、草堆，每一样都可能在替那个小影子打掩护。狗会把谜题追成一阵风，我更喜欢先把谜题盯到不好意思。
 
-有一刻我突然抬头，看到柱子、树影、建筑和发白的天。上面也有消息。猫不能只读地面，高处负责藏声音，开阔地负责暴露位置，所以我看一眼就继续走，沿着边界、阴影和草边，把自己放在最不容易被世界发现的位置。
+def ordered_tags(selected: list[dict[str, Any]]) -> list[str]:
+    tags: list[str] = []
+    for item in selected:
+        for tag in item["row"].get("cat_tags", []):
+            if tag not in tags:
+                tags.append(tag)
+    return tags
 
-后来我靠近干草和枯枝。那里有沙沙声，有被碰过的痕迹，也有那种“看不清但肯定有东西”的黑影。我只靠近一点，再靠近一点，把爪子放到秘密门缝旁边。答案没有立刻出来，但我不急。耐心是猫随身带着的工具，比项圈还可靠。
 
-今天的高光不是大声发生的。它们只是远处的人、田垄的线、落叶里的小动作、突然抬起的头、草堆里躲着的答案，还有我几乎没有发出声音的脚步。等人类回放这段视频时，也许终于会明白：我的一天不是散步，是一场低处侦探工作。
-"""
-    path.write_text(text, encoding="utf-8")
+def diary_title(tags: list[str]) -> str:
+    if any("猎物" in tag for tag in tags):
+        return "今天，我把小动静盯到不好意思"
+    if any("边界" in tag for tag in tags):
+        return "今天，边界把消息递给了我"
+    if any("高处" in tag or "窗口" in tag for tag in tags):
+        return "今天，上面和下面都藏着消息"
+    return "今天，地面把秘密递给了我"
+
+
+def beat_phrase(item: dict[str, Any] | None) -> str:
+    if not item:
+        return "一条低处线索"
+    row, beat = item["row"], item["beat"]
+    tags = row.get("cat_tags", [])
+    ordered = [tag for tag in BEAT_TAG_PRIORITY.get(beat["key"], []) if tag in tags]
+    ordered.extend(tag for tag in tags if tag not in ordered)
+    for tag in ordered:
+        phrase = TAG_DIARY_PHRASES.get(tag)
+        if phrase:
+            return f"{beat['section']}时{phrase}"
+    return beat["section"]
+
+
+def event_sentence(by_key: dict[str, dict[str, Any]], keys: list[str]) -> str:
+    item = next((by_key[key] for key in keys if key in by_key), None)
+    if not item:
+        return "有一阵子，世界安静得像把谜题藏在爪垫下面。我没有扑过去，只把注意力往前推，等它自己露出一条缝。"
+    row, beat = item["row"], item["beat"]
+    event = str(row.get("pet_event", ""))
+    action = str(row.get("pet_action", ""))
+    if "prey_track" in event:
+        return f"然后，{beat['section']}那一段开始小声讲话。{beat['caption']}我没有立刻扑过去，只把注意力推到前面：枯叶、草根、石头、阴影，每一样都可能在替小东西打掩护。狗会把谜题追成一阵风，我更喜欢先把谜题盯到不好意思。"
+    if "sudden_attention" in event or "look_up" in action:
+        return f"有一刻我突然抬头，{beat['caption']}猫不能只读地面，高处也会藏声音；我看一眼就继续走，把自己放回最不容易被发现的位置。"
+    if "threshold_pause" in event:
+        return f"到了{beat['section']}，我先停了半拍。{beat['caption']}边界是很严肃的东西，一边负责安全，一边负责冒险；聪明的猫从来不把两边搞混。"
+    return f"还有一段{beat['section']}，{beat['caption']}我把脚步放轻，像把自己折进影子里，慢慢等世界把下一句说完。"
 
 
 def write_evidence(path: Path, selected: list[dict[str, Any]]) -> None:
