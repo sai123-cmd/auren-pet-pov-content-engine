@@ -8,7 +8,7 @@ AUREN Pet POV Content Engine turns first-person pet footage into three content p
 
 The project started as a validation pipeline for dog bodycam / collar-cam videos. It is designed to keep the analysis layer separate from final storytelling so the same highlight evidence can drive different outputs.
 
-## What “Good Output” Means
+## What Good Output Means
 
 The demo is not considered successful just because it produces files. AUREN uses stricter acceptance criteria:
 
@@ -17,6 +17,7 @@ The demo is not considered successful just because it produces files. AUREN uses
 - Vlog: an edited story with pacing, captions, original ambience, BGM, and a narrative arc. It must not be a bland clip concatenation.
 
 See [docs/OUTPUT_STANDARDS.md](docs/OUTPUT_STANDARDS.md).
+For the grounded comic generation contract, see [docs/COMIC_GENERATION.md](docs/COMIC_GENERATION.md).
 For footage acquisition and licensing boundaries, see [docs/SOURCE_ACQUISITION.md](docs/SOURCE_ACQUISITION.md).
 
 ## Pipeline

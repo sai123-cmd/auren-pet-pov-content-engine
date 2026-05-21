@@ -50,3 +50,7 @@ Remaining gaps:
 - Need modern color cat collar-cam clips with owner interaction, indoor shelves, windows, meows, bells, night scenes, and richer audio.
 - Need a compatible-license public demo set or user-owned footage for committed cat examples.
 - Need automated image-reference generation or API integration so the Looki-like comic can be regenerated deterministically from selected keyframes.
+
+## 2026-05-22 Stability Note
+
+The accepted comic direction is grounded redraw, not text-only generation. The cat v5 output used a real-scene reference board plus a Looki-like redraw prompt, and the repository now documents this as the expected comic contract in `docs/COMIC_GENERATION.md`.

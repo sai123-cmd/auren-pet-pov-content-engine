@@ -46,6 +46,12 @@ Rejected:
 - collage screenshots presented as comics,
 - panels that ignore the original scene or event.
 
+Implementation boundary:
+
+- the pipeline may create reference boards, panel briefs, and fallback storyboards deterministically,
+- final Looki-like art must use image-reference grounding or another method that preserves the real scene,
+- plain text-to-image is useful only for experiments, not accepted as final comic output.
+
 ## Vlog
 
 The vlog must feel edited.
@@ -80,4 +86,3 @@ Cats:
 - more quiet observation, stalking, hiding, vertical surfaces, thresholds, windows, sudden attention,
 - audio may include meows, bells, indoor ambience, owner voice, prey-like sounds,
 - highlights may be subtle and should not be judged only by motion.
-

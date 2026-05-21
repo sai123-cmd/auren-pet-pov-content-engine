@@ -101,6 +101,8 @@ python scripts/convert_catcam_tar_to_mp4.py \
   --output-dir outputs/catcam_mp4
 ```
 
+For final comic rendering, follow `docs/COMIC_GENERATION.md`. The local pipeline prepares grounded frames and briefs, but final Looki-like redraw requires an image-reference generation step.
+
 ## 6. Human Acceptance
 
 Human review should check output quality against `docs/OUTPUT_STANDARDS.md`, not just file existence.
