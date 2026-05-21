@@ -17,6 +17,7 @@ The demo is not considered successful just because it produces files. AUREN uses
 - Vlog: an edited story with pacing, captions, original ambience, BGM, and a narrative arc. It must not be a bland clip concatenation.
 
 See [docs/OUTPUT_STANDARDS.md](docs/OUTPUT_STANDARDS.md).
+For footage acquisition and licensing boundaries, see [docs/SOURCE_ACQUISITION.md](docs/SOURCE_ACQUISITION.md).
 
 ## Pipeline
 

@@ -1,0 +1,3 @@
+source_id,local_filename,species,pov_type,owner,license,source_url,allowed_use,raw_media_committed,derived_media_committed,privacy_notes,attribution
+cat_commons_001,cat_pov_commons_s1.mp4,cat,collar_cam,Wikimedia Commons / PLOS,CC BY 2.5,https://commons.wikimedia.org/wiki/File:Video_recorded_by_a_freely_roaming_cat_-_pbio.0040209.sv001.ogv,open_demo,false,true,no owner home audio in committed repo,"Lesica N, Weng C, Jin J, Yeh C, Alonso J, Stanley G (2006)"
+catcam_movie01,movie01.tar,cat,cat_mounted_camera,Zenodo CatCam,CC BY-NC 2.0 / academic use only,https://zenodo.org/records/46481,local_validation_only,false,false,keep raw and derived media local,"Betsch BY, Einhauser W, Kording KP, Konig P (2004)"

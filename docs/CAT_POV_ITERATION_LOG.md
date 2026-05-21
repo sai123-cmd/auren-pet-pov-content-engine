@@ -42,6 +42,7 @@ What improved:
 - Cat content selection now understands cat-profile labels such as `prey_track`, `threshold_pause`, `sudden_attention`, `brush_inspection`, `window_watch`, `perch_or_climb`, and `ground_patrol`.
 - MiniMax result parsing now reports `parse_ok` counts explicitly and normalizes free-form model action/event text back into profile label IDs while preserving raw model text.
 - Added `run_auren_pipeline.py` as a one-command orchestrator. Smoke tested the no-VLM cat path on the mixed local cat source set.
+- Added source acquisition policy and source manifest template so future cat/dog material is separated into open-demo, local-validation, and authorization-candidate tiers.
 
 Remaining gaps:
 
