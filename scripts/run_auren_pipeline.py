@@ -32,6 +32,8 @@ def main() -> None:
     parser.add_argument("--run-vlm", action="store_true")
     parser.add_argument("--build-content", action="store_true")
     parser.add_argument("--evaluate", action="store_true", help="Run output QA after content build. Requires final comic assets to exist.")
+    parser.add_argument("--min-videos", type=int, default=2, help="Minimum distinct source videos required by output QA.")
+    parser.add_argument("--min-events", type=int, default=3, help="Minimum distinct event labels required by output QA.")
     parser.add_argument("--results", default="", help="Existing MiniMax result JSON, used when --build-content is set without --run-vlm.")
     parser.add_argument("--bgm", default="")
     args = parser.parse_args()
@@ -80,7 +82,7 @@ def main() -> None:
         else:
             run_py("build_auren_content_v2_generic.py", "--results", results, "--manifest", out_dir / "manifest.csv", "--output-dir", final_dir)
         if args.evaluate:
-            run_py("evaluate_content_outputs.py", "--output-dir", final_dir, "--write-report")
+            run_py("evaluate_content_outputs.py", "--output-dir", final_dir, "--min-videos", args.min_videos, "--min-events", args.min_events, "--write-report")
 
     print("AUREN pipeline complete", flush=True)
     print(f"- output_dir: {out_dir}", flush=True)
