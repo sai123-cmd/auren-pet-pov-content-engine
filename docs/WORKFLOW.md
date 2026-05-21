@@ -22,6 +22,16 @@ The same moment may be great for a vlog but weak for a comic, or vice versa.
 
 Use `prepare_vlm_jobs_v3.py` to build frame strips and prompts for a vision-language model.
 
+Use a species profile when known:
+
+```bash
+python scripts/prepare_vlm_jobs_v3.py \
+  --v2-dir outputs/cat_run/prelabels_v2 \
+  --output-dir outputs/cat_run/vlm_jobs_v3 \
+  --per-mode 36 \
+  --profile cat
+```
+
 The VLM output should answer:
 
 - What is the scene?
@@ -30,6 +40,12 @@ The VLM output should answer:
 - What event is happening?
 - Why is it memorable?
 - Is it suitable for diary/comic/vlog?
+
+Profiles tune label hints without changing the strict output schema:
+
+- `generic`: general pet POV labels.
+- `dog`: dog-specific actions and events such as swim, chase, grass exploration, and human connection.
+- `cat`: cat-specific actions and events such as stalk, hide, perch, threshold pause, prey tracking, sudden attention, and brush inspection.
 
 ## 5. Content Rendering
 

@@ -30,6 +30,7 @@ def main() -> None:
     parser.add_argument("--v2-dir", required=True)
     parser.add_argument("--output-dir", required=True)
     parser.add_argument("--per-mode", type=int, default=36)
+    parser.add_argument("--profile", choices=["generic", "dog", "cat"], default="generic")
     args = parser.parse_args()
 
     v2_dir = Path(args.v2_dir).resolve()
@@ -80,7 +81,8 @@ def main() -> None:
                 "strip": str(strip_path),
                 "primary_comic_frame": str(primary_copy),
             },
-            "prompt": build_prompt(row),
+            "profile": args.profile,
+            "prompt": build_prompt(row, args.profile),
         }
         jobs.append(job)
 
@@ -88,7 +90,7 @@ def main() -> None:
     with (out_dir / "vlm_jobs.jsonl").open("w", encoding="utf-8") as f:
         for job in jobs:
             f.write(json.dumps(job, ensure_ascii=False) + "\n")
-    write_prompt_template(out_dir)
+    write_prompt_template(out_dir, args.profile)
     write_content_logic(out_dir)
     write_review_html(out_dir, jobs)
 
@@ -196,10 +198,18 @@ def make_strip(row: dict[str, str], frame_paths: list[Path], out: Path) -> None:
     canvas.save(out, quality=92)
 
 
-def build_prompt(row: dict[str, str]) -> str:
+def build_prompt(row: dict[str, str], profile: str = "generic") -> str:
+    schema = profile_schema(profile)
+    profile_guidance = {
+        "generic": "Use general pet POV labels. Do not assume species if it is not visible or known from source context.",
+        "dog": "Use dog-specific POV judgment: social connection, running, sniffing, swimming, grass exploration, and owner interaction are often important.",
+        "cat": "Use cat-specific POV judgment: quiet scanning, stalking, hiding, threshold pauses, perching, prey attention, window watching, sudden head turns, and brush inspection are often important.",
+    }[profile]
     return f"""You are annotating pet first-person wearable camera footage for AUREN.
 
 Use the three frames from one short segment. Correct the heuristic labels. Be literal and evidence-bound.
+Profile: {profile}
+Profile guidance: {profile_guidance}
 
 Existing V2 labels:
 - scene: {row.get('scene_v2')}
@@ -211,9 +221,9 @@ Existing V2 labels:
 Return STRICT JSON with these keys:
 {{
   "scene": ["..."],
-  "visible_subjects": ["owner", "dog", "cat", "water", "grass", "toy", "ground", "unknown"],
-  "pet_action": ["walk", "run", "swim", "sniff", "search", "look_around", "approach_human", "approach_animal", "play", "pause_observe", "unclear"],
-  "pet_event": ["water_adventure", "grass_exploration", "search_or_inspect", "human_connection", "animal_social_moment", "quiet_observation", "new_scene_discovery", "sound_triggered_attention", "low_signal"],
+  "visible_subjects": {json.dumps(schema["visible_subjects"], ensure_ascii=False)},
+  "pet_action": {json.dumps(schema["pet_action"], ensure_ascii=False)},
+  "pet_event": {json.dumps(schema["pet_event"], ensure_ascii=False)},
   "quality": "good|usable|bad",
   "vlog_fit": 0-5,
   "diary_fit": 0-5,
@@ -225,10 +235,33 @@ Return STRICT JSON with these keys:
 }}"""
 
 
-def write_prompt_template(out_dir: Path) -> None:
-    (out_dir / "VLM_PROMPT_TEMPLATE.md").write_text("""# AUREN VLM Prompt Template
+def profile_schema(profile: str) -> dict[str, list[str]]:
+    base_subjects = ["owner", "human", "dog", "cat", "animal", "water", "grass", "brush", "toy", "food", "ground", "building", "vehicle", "unknown"]
+    if profile == "cat":
+        return {
+            "visible_subjects": base_subjects + ["window", "shelf", "fence", "tree", "prey", "bird", "rodent", "litter_box", "scratching_post"],
+            "pet_action": ["walk", "creep", "stalk", "sniff", "search", "look_around", "look_up", "hide", "perch", "climb", "jump", "pause_observe", "approach_human", "approach_animal", "unclear"],
+            "pet_event": ["ground_patrol", "prey_track", "brush_inspection", "threshold_pause", "sudden_attention", "window_watch", "perch_or_climb", "owner_check_in", "quiet_observation", "new_scene_discovery", "sound_triggered_attention", "low_signal"],
+        }
+    if profile == "dog":
+        return {
+            "visible_subjects": base_subjects + ["leash", "river", "stick", "ball", "trail", "bench"],
+            "pet_action": ["walk", "run", "swim", "sniff", "search", "look_around", "approach_human", "approach_animal", "play", "chase", "drink", "pause_observe", "unclear"],
+            "pet_event": ["water_adventure", "grass_exploration", "search_or_inspect", "human_connection", "animal_social_moment", "run_or_chase", "quiet_observation", "new_scene_discovery", "sound_triggered_attention", "low_signal"],
+        }
+    return {
+        "visible_subjects": base_subjects,
+        "pet_action": ["walk", "run", "swim", "sniff", "search", "look_around", "approach_human", "approach_animal", "play", "pause_observe", "unclear"],
+        "pet_event": ["water_adventure", "grass_exploration", "search_or_inspect", "human_connection", "animal_social_moment", "quiet_observation", "new_scene_discovery", "sound_triggered_attention", "low_signal"],
+    }
+
+
+def write_prompt_template(out_dir: Path, profile: str) -> None:
+    schema = profile_schema(profile)
+    (out_dir / "VLM_PROMPT_TEMPLATE.md").write_text(f"""# AUREN VLM Prompt Template
 
 Goal: correct heuristic V2 labels for short pet POV segments.
+Profile: `{profile}`
 
 The model should:
 
@@ -237,6 +270,12 @@ The model should:
 - separate observable action from narrative event;
 - score vlog/diary/comic independently;
 - explain corrections to V2 labels.
+
+Profile label hints:
+
+- visible_subjects: `{", ".join(schema["visible_subjects"])}`
+- pet_action: `{", ".join(schema["pet_action"])}`
+- pet_event: `{", ".join(schema["pet_event"])}`
 
 Use `vlm_jobs.jsonl` as the task queue.
 """, encoding="utf-8")

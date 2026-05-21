@@ -74,7 +74,8 @@ Prepare VLM jobs:
 python scripts/prepare_vlm_jobs_v3.py \
   --v2-dir outputs/run_001/prelabels_v2 \
   --output-dir outputs/run_001/vlm_jobs_v3 \
-  --per-mode 36
+  --per-mode 36 \
+  --profile generic
 ```
 
 Run MiniMax VLM batch:
@@ -106,6 +107,12 @@ python scripts/evaluate_content_outputs.py \
 For cat-specific POV runs, use the dedicated builder:
 
 ```bash
+python scripts/prepare_vlm_jobs_v3.py \
+  --v2-dir outputs/cat_run/prelabels_v2 \
+  --output-dir outputs/cat_run/vlm_jobs_v3 \
+  --per-mode 36 \
+  --profile cat
+
 python scripts/build_cat_pov_content_v2.py \
   --results outputs/cat_run/minimax_vlm_v1/minimax_vlm_results.json \
   --manifest outputs/cat_run/manifest.csv \

@@ -37,6 +37,7 @@ What improved:
 - The v2 cat builder selected a broader cat-style arc instead of repeating one short clip.
 - The vlog renderer handled no-audio scientific footage by creating a silent bed before BGM mixing.
 - Automated QA passed for both the cat v3 output and the current dog v2 output after fixing artifact selection priority.
+- VLM job preparation now supports a `cat` profile with cat-specific label hints for stalking, hiding, threshold pauses, sudden attention, prey tracking, window watching, and brush inspection.
 
 Remaining gaps:
 
