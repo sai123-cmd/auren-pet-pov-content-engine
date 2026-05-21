@@ -27,6 +27,7 @@ Notes:
 - Raw cat source clips are not committed.
 - The example outputs are generated derivatives for workflow evaluation.
 - Longer modern cat collar-cam footage is still needed for better product validation.
+- A 2026-05-22 Commons API check found only these three files in `Category:Videos_recorded_by_cats`; additional Commons searches for cat POV/cat camera video did not surface more usable first-person cat clips.
 
 ## CatCam Iteration Source
 
