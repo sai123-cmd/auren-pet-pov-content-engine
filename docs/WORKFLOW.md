@@ -54,6 +54,14 @@ For cat POV, use `build_cat_pov_content_v2.py`. It selects cat-specific beats ra
 
 The cat builder also handles no-audio scientific footage by creating a silent bed before mixing BGM, so CatCam-like data can still produce a watchable vlog.
 
+If using Zenodo CatCam tar archives locally, convert them first:
+
+```bash
+python scripts/convert_catcam_tar_to_mp4.py \
+  --input-dir /path/to/catcam_tars \
+  --output-dir outputs/catcam_mp4
+```
+
 ## 6. Human Acceptance
 
 Human review should check output quality against `docs/OUTPUT_STANDARDS.md`, not just file existence.

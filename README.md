@@ -105,6 +105,14 @@ python scripts/build_cat_pov_content_v2.py \
   --bgm outputs/cat_run/cat_bgm.mp3
 ```
 
+Convert local Zenodo CatCam tar archives when you need extra academic validation clips:
+
+```bash
+python scripts/convert_catcam_tar_to_mp4.py \
+  --input-dir /path/to/catcam_tars \
+  --output-dir outputs/catcam_mp4
+```
+
 ## Dog POV Example
 
 The repository includes a small example output pack under [examples/dog_pov_test_002](examples/dog_pov_test_002):
@@ -137,7 +145,7 @@ Key files:
 - `assets/cat_vlog_story_v1.mp4`
 - `cat_pov_self_evaluation_v1.md`
 
-An additional local CatCam iteration was tested with longer academic-use-only cat-mounted videos from Zenodo. Those derived media are not committed because the dataset is CC BY-NC / academic use only, but the v2 cat builder and source notes are included so the workflow can be repeated with licensed material.
+Additional local CatCam iterations were tested with longer academic-use-only cat-mounted videos from Zenodo. Those derived media are not committed because the dataset is CC BY-NC / academic use only, but the converter, v2 cat builder, and source notes are included so the workflow can be repeated with licensed material.
 
 ## Safety and Licensing
 

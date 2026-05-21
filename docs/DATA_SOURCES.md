@@ -44,3 +44,13 @@ Recommended use:
 
 - Use CatCam locally to stress-test cat-specific recognition: low camera height, field/soil rows, distant humans, leaf-floor movement, sudden attention, and brush inspection.
 - Keep open-source examples based on user-owned media or clearly compatible open-license material.
+
+Local conversion:
+
+```bash
+python scripts/convert_catcam_tar_to_mp4.py \
+  --input-dir /path/to/catcam_tars \
+  --output-dir outputs/catcam_mp4
+```
+
+Current local validation has used `movie01`, `movie07`, `movie12`, `movie13`, and `movie16`. These clips improve scene diversity but should stay outside committed examples under the current license.
