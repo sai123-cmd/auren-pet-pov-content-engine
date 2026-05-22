@@ -228,6 +228,8 @@ def find_first(folder: Path, patterns: list[str]) -> Path | None:
 def artifact_score(path: Path) -> tuple[int, str]:
     name = path.name.lower()
     score = 0
+    if "pov_locked" in name or "pov-lock" in name:
+        score += 80
     if "looki" in name:
         score += 50
     if "generated" in name:

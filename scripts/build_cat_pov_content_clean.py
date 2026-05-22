@@ -13,6 +13,11 @@ from typing import Any
 
 from PIL import Image, ImageDraw, ImageFont
 
+try:
+    from render_pov_locked_comic_page import render_pov_locked_comic_page
+except Exception:  # pragma: no cover - optional local renderer fallback.
+    render_pov_locked_comic_page = None
+
 
 BEATS = [
     {
@@ -129,12 +134,19 @@ def main() -> None:
     rows = [enrich(row, manifest) for row in load_json(Path(args.results)) if row.get("parse_ok")]
     selected = select_rows(rows)
 
-    write_json(out / "cat_pov_highlights_clean.json", [public(item) for item in selected])
+    highlights_json = out / "cat_pov_highlights_clean.json"
+    write_json(highlights_json, [public(item) for item in selected])
     write_csv(out / "cat_pov_highlights_clean.csv", [public(item) for item in selected])
     write_diary(out / "cat_diary_story_clean.md", selected)
     write_evidence(out / "cat_diary_evidence_clean.md", selected)
     write_reference_board(out / "cat_comic_reference_mature_real_scenes.jpg", selected[:7])
     write_comic_prompt(out / "cat_comic_mature_prompt.md", selected[:7])
+    if render_pov_locked_comic_page:
+        render_pov_locked_comic_page(
+            highlights_json,
+            out / "cat_comic_page_looki_pov_locked_generated_v4.png",
+            out / "comic_pov_locked_frames",
+        )
     write_vlog_plan(out / "cat_vlog_plan_clean.md", selected)
     render_vlog(out, selected, Path(args.bgm) if args.bgm else None)
     write_run_notes(out / "RUN_NOTES.md", selected)
@@ -288,6 +300,8 @@ Style: soft digital watercolor, clean black gutters, cinematic lighting, express
 
 Grounding: keep the real cat POV events recognizable: low outdoor paths, grass, leaves, people/feet if visible, trees/sky, boundaries, quiet observation. The cat may be implied by ears, paws, whiskers, shadow, or thought bubbles at the frame edge.
 
+POV lock: preserve each panel's source camera angle, horizon, crop logic, object scale, and occlusion from the reference frame. Do not add visible cat ears, cat face, paws, whiskers, body, or a recurring cat avatar unless that exact element is already visible in that specific source frame. Do not convert a first-person/neck-camera frame into a third-person, over-the-shoulder, or cinematic external camera view.
+
 Story arc: a cat in France turns one long outdoor walk into a scent-map travelogue: gravel road, mossy roof, wet riverbank, nose close-up, woodpile fortress, forest-floor maze, human van camp, evergreen hiding place.
 
 Panels:
@@ -295,7 +309,7 @@ Panels:
 
 Text: use only short readable Chinese bubbles, preferably these exact short phrases: 路先醒了, 屋顶也有味道, 水边换了气味, 我来确认一下, 这里像一堵墙, 下面也有路, 他们也在这儿, 今天藏进松针里.
 
-Avoid: analysis symbols, radar circles, warning triangles, route-map overlays, UI graphics, debug marks, raw screenshots, contact sheet, storyboard, photo filter, unrelated fantasy, generic cute-cat portrait page, unreadable text, watermark."""
+Avoid: analysis symbols, radar circles, warning triangles, route-map overlays, UI graphics, debug marks, raw screenshots, contact sheet, storyboard, photo filter, unrelated fantasy, generic cute-cat portrait page, invented ears/face/body, shifted POV, unreadable text, watermark."""
     path.write_text("# 成熟猫咪 POV 漫画生成提示\n\n```text\n" + prompt + "\n```\n", encoding="utf-8")
 
 

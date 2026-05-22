@@ -34,6 +34,7 @@ The comic target is Looki-like: a polished hand-drawn multi-panel illustration b
 Required:
 
 - each panel is grounded in one or more real evidence frames,
+- each panel preserves the actual POV/camera angle, horizon, object scale, and occlusion of its source frame,
 - the rendered panel is redrawn, not photo-filtered,
 - real event and scene remain recognizable,
 - pet imagination is added lightly and tied to the recognized event through natural comic storytelling such as thought bubbles, scent wisps, case-file fantasies, hidden-door gags, motion, lighting, and expression,
@@ -45,6 +46,8 @@ Rejected:
 - edge-detection or posterize photo filters,
 - collage screenshots presented as comics,
 - panels that ignore the original scene or event,
+- panels that add a recurring cat avatar, cat ears, cat face, paws, or whiskers that were not visible in that panel's source frame,
+- panels that turn first-person/collar-camera footage into a third-person, over-the-shoulder, or external cinematic camera,
 - repeated generic "cute cat" overlays that do not express the specific action/event,
 - analysis symbols presented as final art: radar circles, warning triangles, route-map overlays, debug UI, or meaningless icons.
 

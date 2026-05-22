@@ -20,6 +20,12 @@ The repository is responsible for deterministic steps:
 
 The deterministic local renderer is acceptable for pipeline validation only. The user-facing Looki-like redraw requires an image-conditioned generation step or equivalent mature redraw process. The model or product API must see the reference board or per-panel frames. Plain text-to-image is not acceptable for final output.
 
+## POV Lock
+
+Grounding is not enough if the redraw changes camera position. A valid POV comic must preserve the source frame's camera angle, horizon, object scale, occlusion, and visible subject boundaries. Do not add a recurring cat avatar, ears, paws, face, whiskers, or body unless that exact element is already visible in that panel's source frame. Do not convert collar-cam or first-person footage into third-person, over-the-shoulder, or cinematic external camera shots.
+
+The pipeline should keep a `pov_locked` comic artifact that is rendered directly from exact source frames. Treat it as the perspective contract for any later image-reference redraw: a prettier generated image is still rejected if it drifts away from the POV-locked version.
+
 ## Grounded Workflow
 
 1. Segment the source videos and run VLM recognition.
@@ -27,8 +33,8 @@ The deterministic local renderer is acceptable for pipeline validation only. The
 3. Build a 6-panel evidence board from primary frames.
 4. Generate an event-linked imagination plan for each panel.
 5. Generate a redraw prompt that names the real events, panel-specific imagination gags, and forbids unrelated invention.
-6. Render a local grounded draft only for internal QA.
-7. Use an image-reference capable model/API to redraw the board as a mature single comic page.
+6. Render a local POV-locked comic page from exact source frames for perspective QA.
+7. Use an image-reference capable model/API to redraw the board as a mature single comic page, while preserving the POV-locked composition.
 8. Add controlled captions locally if needed, so model text does not become unreadable.
 9. Run output QA and human review against `docs/OUTPUT_STANDARDS.md`.
 
