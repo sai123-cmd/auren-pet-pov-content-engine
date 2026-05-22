@@ -253,7 +253,22 @@ def unique_nonempty(rows: list[dict[str, str]], key: str) -> set[str]:
 
 def is_fallback_comic(path: Path) -> bool:
     name = path.name.lower()
-    return any(token in name for token in ["fallback", "contact_sheet", "storyboard", "reference", "draft", "pov_locked", "pov_lock", "qa"])
+    return any(
+        token in name
+        for token in [
+            "fallback",
+            "contact_sheet",
+            "storyboard",
+            "reference",
+            "draft",
+            "pov_locked",
+            "pov_lock",
+            "qa",
+            "rejected",
+            "not_acceptable",
+            "photo_like",
+        ]
+    )
 
 
 def fail(name: str, message: str) -> dict[str, Any]:
