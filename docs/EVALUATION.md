@@ -57,4 +57,4 @@ Cat POV review should not overvalue speed. It should recognize subtle moments: t
 
 ## Known Limits
 
-The evaluator can verify that a final comic file is present and not a storyboard, reference board, or contact sheet, but it cannot yet measure whether the image is beautiful enough or whether every imaginative element is perfectly tied to the source event. Comic grounding still requires visual human review, especially before replacing the local renderer with an image-reference API.
+The evaluator can verify that a final comic file is present and not a storyboard, reference board, contact sheet, or deterministic draft, but it cannot yet measure whether the image is mature enough or whether every imaginative element is naturally tied to the source event. Comic grounding still requires visual human review and should reject analysis-symbol pages even when file checks pass.

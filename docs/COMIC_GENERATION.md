@@ -15,10 +15,10 @@ The repository is responsible for deterministic steps:
 - create a real-scene reference board,
 - write a panel brief that ties every panel to a source segment,
 - render a storyboard for internal QA,
-- render a user-facing grounded comic page with panel layout, comic treatment, captions, and event-linked imagination,
+- render a draft grounded comic layout for internal QA,
 - evaluate that comic/reference artifacts exist at usable resolution.
 
-The deterministic local renderer is acceptable for pipeline validation and demos, but the highest-quality Looki-like redraw still requires an image-conditioned generation step. The model or product API must see the reference board or per-panel frames. Plain text-to-image is not acceptable for final output.
+The deterministic local renderer is acceptable for pipeline validation only. The user-facing Looki-like redraw requires an image-conditioned generation step or equivalent mature redraw process. The model or product API must see the reference board or per-panel frames. Plain text-to-image is not acceptable for final output.
 
 ## Grounded Workflow
 
@@ -27,8 +27,8 @@ The deterministic local renderer is acceptable for pipeline validation and demos
 3. Build a 6-panel evidence board from primary frames.
 4. Generate an event-linked imagination plan for each panel.
 5. Generate a redraw prompt that names the real events, panel-specific imagination gags, and forbids unrelated invention.
-6. Render a local grounded comic page so users never see the storyboard as the final artifact.
-7. For production polish, optionally use an image-reference capable model/API to redraw the board as a single comic page.
+6. Render a local grounded draft only for internal QA.
+7. Use an image-reference capable model/API to redraw the board as a mature single comic page.
 8. Add controlled captions locally if needed, so model text does not become unreadable.
 9. Run output QA and human review against `docs/OUTPUT_STANDARDS.md`.
 
@@ -38,14 +38,14 @@ The imagination layer must be caused by the recognized pet event. Generic cute d
 
 Examples for cat POV:
 
-- `ground_patrol`: paw-map marks, pebble buttons, low-camera route arrows.
-- `prey_track`: whisker radar rings, leaf-rustle marks, a tiny suspicious shadow.
-- `threshold_pause`: dashed safe/danger boundary, stealth path, exposure timer.
-- `sudden_attention`: ear-alert lightning marks, sky/building signal pings.
-- `brush_inspection`: hay secret door, question-mark crumbs, cautious paw reaching in.
-- `owner_check_in`: distant human footsteps as oversized map pins.
+- `ground_patrol`: low gravel world redrawn like a tiny detective case, with a short thought bubble.
+- `prey_track`: leaves, grass, or twigs subtly moving, with suspenseful lighting and a half-seen clue.
+- `threshold_pause`: a low-angle opening, gate, building edge, or courtyard composed like a stealthy crossing.
+- `sudden_attention`: the cat looking up, with sky/building/light treated like a mysterious message.
+- `brush_inspection`: hay or dry grass hiding a small imagined door or secret answer.
+- `owner_check_in`: distant human legs/footsteps as part of the scene, not UI pins.
 
-This is the difference between a competent redraw and a comic: the real frame says where the cat is; the event-linked imagination says what the cat thinks is happening.
+This is the difference between a competent redraw and a comic: the real frame says where the cat is; the event-linked imagination says what the cat thinks is happening. Do not use radar circles, warning triangles, route maps, or debug icons in the final page.
 
 ## Panel Selection
 
@@ -71,8 +71,8 @@ Avoid:
 
 Dog comic beats usually work well with water, running, chasing, grass exploration, human greeting, toys, and owner-following.
 
-Cat comic beats are subtler: threshold pauses, sudden attention, field patrol, prey/rustle tracking, hiding inspection, perches, windows, owner check-ins, and quiet surveillance. The comic should make those small moments visible with light imagination such as whisker radar, scent trails, paw-map marks, ear-alert marks, and blank thought bubbles.
+Cat comic beats are subtler: threshold pauses, sudden attention, field patrol, prey/rustle tracking, hiding inspection, perches, windows, owner check-ins, and quiet surveillance. The comic should make those small moments visible with natural story staging, thought bubbles, scent/motion atmosphere, and small imagined props that belong in the scene.
 
 ## Automation Gap
 
-The open-source pipeline can now prepare the grounded inputs and render a user-facing comic page locally. The remaining production gap is integrating a stable image-reference model/API that can redraw the selected frames with more natural hand-drawn polish without drifting away from the source scene.
+The open-source pipeline can now prepare the grounded inputs and an internal draft. The remaining production gap is integrating a stable image-reference model/API that can redraw the selected frames into mature hand-drawn comic art without drifting away from the source scene.

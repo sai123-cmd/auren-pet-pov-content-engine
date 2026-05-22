@@ -70,8 +70,8 @@ def check_diary(out_dir: Path) -> dict[str, Any]:
     lines = [line.strip() for line in text.splitlines() if line.strip()]
     bullet_lines = [line for line in lines if line.startswith(("-", "*", "1.", "2.", "3.", "4.", "5."))]
     paragraph_count = sum(1 for line in lines if not line.startswith("#") and not line.startswith(("<!--", "- ", "* ")))
-    first_person_hits = sum(text.count(token) for token in ["我", "my ", "I ", "me "])
-    mojibake_hits = sum(text.count(token) for token in ["锛", "绗", "鎴", "璺", "鈥", "�"])
+    first_person_hits = sum(text.count(token) for token in ["\u6211", "\u6211\u7684", "\u6211\u628a", "\u6211\u8bf4", "my ", "I ", "me "])
+    mojibake_hits = sum(text.count(token) for token in ["\u95bf", "\u7f01", "\u95b9", "\u9420", "\u95b3", "\ufffd", "\u6d60\u5a82", "\u93b4\u6218", "\u93b4\u6201", "\u6d93\u20ac"])
     passed = paragraph_count >= 4 and first_person_hits >= 5 and len(bullet_lines) <= 2 and mojibake_hits == 0
     return {
         "name": "diary",
@@ -253,7 +253,7 @@ def unique_nonempty(rows: list[dict[str, str]], key: str) -> set[str]:
 
 def is_fallback_comic(path: Path) -> bool:
     name = path.name.lower()
-    return any(token in name for token in ["fallback", "contact_sheet", "storyboard", "reference"])
+    return any(token in name for token in ["fallback", "contact_sheet", "storyboard", "reference", "draft"])
 
 
 def fail(name: str, message: str) -> dict[str, Any]:

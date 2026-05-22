@@ -193,7 +193,7 @@ def render_final_comic_page(out: Path) -> None:
             "--highlights",
             str(out / "cat_pov_highlights_v2.json"),
             "--output",
-            str(out / "cat_comic_page_grounded_event_imagination_v2.png"),
+            str(out / "cat_comic_draft_grounded_layout_v2.png"),
         ],
         check=True,
     )

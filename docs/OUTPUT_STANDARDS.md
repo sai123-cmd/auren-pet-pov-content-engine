@@ -36,7 +36,7 @@ Required:
 - each panel is grounded in one or more real evidence frames,
 - the rendered panel is redrawn, not photo-filtered,
 - real event and scene remain recognizable,
-- pet imagination is added lightly and tied to the recognized event: scent trails for tracking, map marks for patrol, danger lines for thresholds, ear-alert marks for sudden attention,
+- pet imagination is added lightly and tied to the recognized event through natural comic storytelling such as thought bubbles, scent wisps, case-file fantasies, hidden-door gags, motion, lighting, and expression,
 - final text is added locally or in a controlled layout so model text does not become gibberish.
 
 Rejected:
@@ -45,12 +45,13 @@ Rejected:
 - edge-detection or posterize photo filters,
 - collage screenshots presented as comics,
 - panels that ignore the original scene or event,
-- repeated generic "cute cat" overlays that do not express the specific action/event.
+- repeated generic "cute cat" overlays that do not express the specific action/event,
+- analysis symbols presented as final art: radar circles, warning triangles, route-map overlays, debug UI, or meaningless icons.
 
 Implementation boundary:
 
 - the pipeline may create reference boards, panel briefs, and fallback storyboards deterministically,
-- final Looki-like art must use image-reference grounding or another method that preserves the real scene,
+- final Looki-like art must be mature narrative comic art using image-reference grounding or another method that preserves the real scene,
 - plain text-to-image is useful only for experiments, not accepted as final comic output.
 
 ## Vlog
