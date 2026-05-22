@@ -176,11 +176,27 @@ def main() -> None:
     write_comic_brief(out / "cat_comic_brief_v2.md", selected)
     write_reference_board(out / "cat_comic_reference_real_scenes_v2.jpg", selected[:6])
     write_imagination_storyboard(out / "cat_comic_event_imagination_storyboard_v2.jpg", selected[:6])
+    render_final_comic_page(out)
     write_vlog_plan(out / "cat_vlog_plan_v2.md", selected)
     render_vlog(out, selected, Path(args.bgm) if args.bgm else None)
     write_review(out / "cat_pov_self_evaluation_v2.md", rows, selected)
     write_readme(out / "README.md")
     print(f"Done: {out}")
+
+
+def render_final_comic_page(out: Path) -> None:
+    script = Path(__file__).resolve().with_name("render_cat_comic_page.py")
+    subprocess.run(
+        [
+            sys.executable,
+            str(script),
+            "--highlights",
+            str(out / "cat_pov_highlights_v2.json"),
+            "--output",
+            str(out / "cat_comic_page_grounded_event_imagination_v2.png"),
+        ],
+        check=True,
+    )
 
 
 def load_manifest(path: Path) -> dict[str, dict[str, str]]:

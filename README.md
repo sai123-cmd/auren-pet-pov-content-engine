@@ -111,7 +111,7 @@ MINIMAX_API_KEY=... python scripts/run_auren_pipeline.py \
   --bgm outputs/cat_run/cat_bgm.mp3
 ```
 
-Run `evaluate_content_outputs.py` after the final comic image has been generated or copied into the final content folder.
+Cat-specific content builds now emit a final user-facing comic page (`cat_comic_page_grounded_event_imagination_v2.png`) in addition to the reference board and storyboard. Run `evaluate_content_outputs.py` after the final comic image is present in the final content folder.
 
 Generate an instrumental BGM track with MiniMax:
 
