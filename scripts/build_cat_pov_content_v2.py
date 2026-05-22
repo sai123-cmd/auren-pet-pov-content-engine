@@ -97,6 +97,50 @@ BEAT_TAG_PRIORITY = {
 }
 
 
+COMIC_IMAGINATION_BY_BEAT = {
+    "ground_departure": {
+        "story_joke": "把碎石路画成猫专属仪表盘：每颗石头都是一个待侦查按钮，远处人脚像移动路标。",
+        "visual_layer": "paw-print route map, tiny detective arrows, pebble buttons, low camera speed lines",
+        "bubble": "地面上线了。",
+    },
+    "field_lines": {
+        "story_joke": "把田垄/草线画成猫的秘密地图，像在读一张只有胡须能解码的路线图。",
+        "visual_layer": "grass rows as treasure-map lines, whisker compass, small X marks, scent trail ribbons",
+        "bubble": "路线藏在草里。",
+    },
+    "leaf_prey": {
+        "story_joke": "把落叶里的小动静画成猫脑内雷达锁定目标，目标不必画实，保持悬念更有趣。",
+        "visual_layer": "whisker radar rings, leaf rustle marks, tiny suspicious shadow, comic magnifier glint",
+        "bubble": "抓到半个声音。",
+    },
+    "threshold_cross": {
+        "story_joke": "把开阔地/建筑边界画成一条夸张的安全线，猫像间谍穿越曝光区。",
+        "visual_layer": "dashed danger boundary, stealth path, little exposure timer, paw-shaped checkpoint",
+        "bubble": "快，别被世界发现。",
+    },
+    "sudden_attention": {
+        "story_joke": "把突然抬头画成耳朵接收到天线信号，上方建筑/天空像发来秘密电报。",
+        "visual_layer": "ear-alert lightning marks, vertical attention beam, sky message pings, startled camera tilt",
+        "bubble": "上面也有情报。",
+    },
+    "brush_rustle": {
+        "story_joke": "把干草/草堆画成一扇秘密门，答案躲在里面，只露出问号和一点点动静。",
+        "visual_layer": "hay secret door, question-mark crumbs, rustle glyphs, paw reaching cautiously",
+        "bubble": "答案在里面装睡。",
+    },
+    "close_watch": {
+        "story_joke": "把低处盯梢画成猫的慢动作审讯：镜头越靠近，草叶越心虚。",
+        "visual_layer": "slow-motion panel streaks, narrowed eye overlay, nervous grass marks, tiny clue tags",
+        "bubble": "我只靠近一点。",
+    },
+    "soft_ending": {
+        "story_joke": "把结尾画成猫把一天线索盖章归档，像完成一份绝密侦探报告。",
+        "visual_layer": "case-file stamp, paw seal, collected clue icons, curled tail closing frame",
+        "bubble": "案件先收进胡须。",
+    },
+}
+
+
 def main() -> None:
     try:
         sys.stdout.reconfigure(encoding="utf-8")
@@ -128,8 +172,10 @@ def main() -> None:
     write_csv(out / "cat_pov_highlights_v2.csv", [public(x) for x in selected])
     write_diary(out / "cat_diary_story_v2.md", selected)
     write_evidence(out / "cat_diary_evidence_v2.md", selected)
+    write_comic_imagination_files(out, selected)
     write_comic_brief(out / "cat_comic_brief_v2.md", selected)
     write_reference_board(out / "cat_comic_reference_real_scenes_v2.jpg", selected[:6])
+    write_imagination_storyboard(out / "cat_comic_event_imagination_storyboard_v2.jpg", selected[:6])
     write_vlog_plan(out / "cat_vlog_plan_v2.md", selected)
     render_vlog(out, selected, Path(args.bgm) if args.bgm else None)
     write_review(out / "cat_pov_self_evaluation_v2.md", rows, selected)
@@ -354,20 +400,100 @@ def write_evidence(path: Path, selected: list[dict[str, Any]]) -> None:
     path.write_text("\n".join(lines), encoding="utf-8")
 
 
+def write_comic_imagination_files(out: Path, selected: list[dict[str, Any]]) -> None:
+    plan = comic_plan(selected[:6])
+    write_json(out / "cat_comic_imagination_plan_v2.json", plan)
+    lines = [
+        "# Cat POV Comic Imagination Plan v2",
+        "",
+        "Purpose: make the comic funny and event-aware without drifting away from the real POV frames.",
+        "",
+        "Rule: every imaginative element must be justified by the selected cat action/event. No generic cute decoration.",
+        "",
+    ]
+    for panel in plan:
+        lines.extend([
+            f"## Panel {panel['panel']}: {panel['section']}",
+            "",
+            f"- source: `{panel['segment_id']}`",
+            f"- real scene: {panel['real_scene']}",
+            f"- action/event: {panel['action']} / {panel['event']}",
+            f"- cat joke: {panel['story_joke']}",
+            f"- visual imagination: {panel['visual_layer']}",
+            f"- bubble idea: {panel['bubble']}",
+            f"- guardrail: {panel['guardrail']}",
+            "",
+        ])
+    (out / "cat_comic_imagination_plan_v2.md").write_text("\n".join(lines), encoding="utf-8")
+
+
+def comic_plan(selected: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    panels: list[dict[str, Any]] = []
+    for i, item in enumerate(selected, 1):
+        row, beat = item["row"], item["beat"]
+        imagination = comic_imagination(item)
+        panels.append({
+            "panel": i,
+            "section": beat["section"],
+            "caption": beat["caption"],
+            "segment_id": row["segment_id"],
+            "frame": row.get("primary_comic_frame", ""),
+            "real_scene": row.get("scene", ""),
+            "subjects": row.get("visible_subjects", ""),
+            "action": row.get("pet_action", ""),
+            "event": row.get("pet_event", ""),
+            "story_joke": imagination["story_joke"],
+            "visual_layer": imagination["visual_layer"],
+            "bubble": imagination["bubble"],
+            "guardrail": "Preserve the real camera angle, foreground texture, and visible landmarks; imagination should sit on top like cat thoughts.",
+        })
+    return panels
+
+
+def comic_imagination(item: dict[str, Any]) -> dict[str, str]:
+    row, beat = item["row"], item["beat"]
+    idea = dict(COMIC_IMAGINATION_BY_BEAT.get(beat["key"], COMIC_IMAGINATION_BY_BEAT["soft_ending"]))
+    event = str(row.get("pet_event", ""))
+    action = str(row.get("pet_action", ""))
+    if "prey_track" in event and beat["key"] not in {"leaf_prey", "brush_rustle", "close_watch"}:
+        idea["visual_layer"] += ", tiny target reticle hidden in grass"
+        idea["story_joke"] += " 同时暗示猫已经把某个看不见的小目标列入观察名单。"
+    if "owner_check_in" in event:
+        idea["visual_layer"] += ", distant human footsteps drawn as oversized map pins"
+    if "look_up" in action or "sudden_attention" in event:
+        idea["visual_layer"] += ", ear-shaped signal arcs"
+    if "threshold_pause" in event:
+        idea["visual_layer"] += ", safe/danger side labels shown as icons not readable text"
+    return idea
+
+
 def write_comic_brief(path: Path, selected: list[dict[str, Any]]) -> None:
-    prompt = """Create a square 6-panel Looki-like hand-drawn comic page based on the attached real cat POV reference board. Redraw the real scenes, do not use a photo filter and do not invent unrelated scenes. Keep the real evidence recognizable: low black-and-white cat-mounted camera, field/soil rows, distant humans, leaf-covered slope, tiny prey movement, sudden upward attention to post/sky/building, brush and hay close-up. Style: polished soft digital watercolor, clean black gutters, expressive line art, cinematic shadows, gentle suspense, slightly whimsical cat imagination. Add subtle whisker radar, scent trails, paw-map marks, ear-alert marks, and small blank thought bubbles. No readable text, no logos, no watermark."""
+    plan = comic_plan(selected[:6])
+    panel_prompt = "\n".join(
+        f"Panel {p['panel']} {p['section']}: redraw real scene ({p['real_scene']}); event={p['event']}; add event-linked imagination: {p['visual_layer']}; joke={p['story_joke']}; optional tiny bubble idea={p['bubble']}."
+        for p in plan
+    )
+    prompt = f"""Create a square 6-panel Looki-like hand-drawn comic page based on the attached real cat POV reference board. Redraw the real scenes, do not use a photo filter and do not invent unrelated scenes. Keep the real evidence recognizable: low black-and-white cat-mounted camera, field/soil rows, distant humans, leaf-covered slope, tiny prey/rustle attention, sudden upward attention to post/sky/building, brush and hay close-up.
+
+Crucial direction: this is not just a redraw. Each panel must include a small cat-imagination gag caused by the actual cat event. The imagination should be drawn as overlays, symbols, thoughts, motion marks, or visual metaphors sitting on top of the real scene, not as unrelated fantasy.
+
+{panel_prompt}
+
+Style: polished soft digital watercolor, clean black gutters, expressive line art, cinematic shadows, gentle suspense, witty cat detective energy. Use mostly blank/simple bubbles or icon bubbles; no readable long text, no logos, no watermark."""
     lines = [
         "# Cat POV Comic Brief v2",
         "",
-        "Goal: Looki-like grounded redraw. The panel layout must be based on real keyframes, with only small imaginative additions.",
+        "Goal: Looki-like grounded redraw plus event-linked cat imagination. The panel layout must be based on real keyframes, and the fun layer must come from the recognized cat action/event.",
         "",
         "## Panel Evidence",
         "",
     ]
-    for i, item in enumerate(selected[:6], 1):
-        row, beat = item["row"], item["beat"]
-        lines.append(f"{i}. {beat['section']} | {beat['caption']} | evidence: {row['segment_id']} | frame: {row.get('primary_comic_frame', '')}")
-        lines.append(f"   scene: {row.get('scene', '')}")
+    for panel in plan:
+        lines.append(f"{panel['panel']}. {panel['section']} | {panel['caption']} | evidence: {panel['segment_id']} | frame: {panel['frame']}")
+        lines.append(f"   scene: {panel['real_scene']}")
+        lines.append(f"   event: {panel['event']} | action: {panel['action']}")
+        lines.append(f"   imagination: {panel['visual_layer']}")
+        lines.append(f"   joke: {panel['story_joke']}")
     lines.extend(["", "## Image Generation Prompt", "", "```text", prompt, "```"])
     path.write_text("\n".join(lines), encoding="utf-8")
 
@@ -376,8 +502,8 @@ def write_reference_board(path: Path, selected: list[dict[str, Any]]) -> None:
     w, h = 1600, 1120
     canvas = Image.new("RGB", (w, h), (244, 239, 230))
     draw = ImageDraw.Draw(canvas)
-    draw.text((40, 28), "AUREN Cat POV v2 comic reference: redraw real scenes", font=font(38, True), fill=(26, 24, 22))
-    draw.text((40, 76), "Use these keyframes as grounding. Keep events/composition recognizable; add only subtle cat imagination.", font=font(22), fill=(78, 70, 62))
+    draw.text((40, 28), "AUREN Cat POV v2 comic reference: redraw real scenes + event imagination", font=font(34, True), fill=(26, 24, 22))
+    draw.text((40, 76), "Use keyframes as grounding. Add the specified cat-thought gag for each real event; do not add generic cute decoration.", font=font(21), fill=(78, 70, 62))
     boxes = [
         (40, 126, 470, 270),
         (565, 126, 470, 270),
@@ -388,6 +514,7 @@ def write_reference_board(path: Path, selected: list[dict[str, Any]]) -> None:
     ]
     for i, (item, box) in enumerate(zip(selected, boxes), 1):
         row, beat = item["row"], item["beat"]
+        imagination = comic_imagination(item)
         x, y, bw, bh = box
         img = Image.open(row["primary_comic_frame"]).convert("RGB")
         img = fit_cover(img, bw, bh)
@@ -396,18 +523,103 @@ def write_reference_board(path: Path, selected: list[dict[str, Any]]) -> None:
         draw.rounded_rectangle([x + 12, y + 12, x + 68, y + 66], radius=18, fill=(255, 250, 218), outline=(23, 23, 23), width=3)
         draw.text((x + 33, y + 21), str(i), font=font(26, True), fill=(20, 20, 20))
         draw.text((x, y + bh + 12), f"{beat['section']} | {beat['caption']}", font=font(24, True), fill=(30, 28, 24))
-        draw.text((x, y + bh + 46), wrap(row.get("scene", ""), 48), font=font(18), fill=(82, 76, 68))
+        draw.text((x, y + bh + 46), wrap(row.get("scene", ""), 48), font=font(17), fill=(82, 76, 68))
+        draw.text((x, y + bh + 104), wrap("想象: " + imagination["bubble"], 24), font=font(18, True), fill=(120, 70, 42))
     notes = [
         "Cat redraw rules:",
         "Preserve real POV composition; do not replace with generic cute cat scenes.",
         "Make low-resolution grayscale evidence readable through polished illustration.",
-        "Imagination layer: whisker radar, scent trails, paw-map marks, ear-alert marks.",
+        "Fun layer must be caused by the event: map for patrol, radar for prey/rustle, danger line for threshold, antenna marks for sudden attention.",
     ]
     yy = 940
     for note in notes:
         draw.text((40, yy), note, font=font(25, True) if note.endswith(":") else font(22), fill=(30, 28, 24))
         yy += 35
     canvas.save(path, quality=94)
+
+
+def write_imagination_storyboard(path: Path, selected: list[dict[str, Any]]) -> None:
+    w, h = 1600, 1220
+    canvas = Image.new("RGB", (w, h), (246, 240, 230))
+    draw = ImageDraw.Draw(canvas)
+    draw.text((40, 30), "AUREN Cat POV event-imagination storyboard", font=font(36, True), fill=(28, 25, 22))
+    draw.text((40, 76), "Deterministic review board: real frames plus event-linked cat-thought overlays. Not final comic art.", font=font(21), fill=(78, 70, 62))
+    boxes = [
+        (40, 130, 470, 300),
+        (565, 130, 470, 300),
+        (1090, 130, 470, 300),
+        (40, 650, 470, 300),
+        (565, 650, 470, 300),
+        (1090, 650, 470, 300),
+    ]
+    for i, (item, box) in enumerate(zip(selected, boxes), 1):
+        row, beat = item["row"], item["beat"]
+        x, y, bw, bh = box
+        img = Image.open(row["primary_comic_frame"]).convert("RGB")
+        img = fit_cover(img, bw, bh)
+        img = draw_event_overlay(img, beat["key"])
+        canvas.paste(img, (x, y))
+        draw.rectangle([x, y, x + bw, y + bh], outline=(28, 24, 22), width=4)
+        draw.rounded_rectangle([x + 12, y + 12, x + 66, y + 64], radius=18, fill=(255, 250, 220), outline=(28, 24, 22), width=3)
+        draw.text((x + 32, y + 20), str(i), font=font(25, True), fill=(18, 18, 18))
+        bubble = comic_imagination(item)["bubble"]
+        draw.text((x, y + bh + 14), f"{beat['section']} | {bubble}", font=font(23, True), fill=(34, 30, 26))
+        draw.text((x, y + bh + 48), f"event: {row.get('pet_event', '')}", font=font(16), fill=(112, 68, 42))
+    canvas.save(path, quality=94)
+
+
+def draw_event_overlay(img: Image.Image, beat_key: str) -> Image.Image:
+    layer = img.convert("RGBA")
+    draw = ImageDraw.Draw(layer, "RGBA")
+    w, h = layer.size
+    amber = (255, 198, 69, 190)
+    green = (90, 210, 150, 160)
+    red = (255, 92, 83, 170)
+    blue = (96, 180, 255, 170)
+    ink = (24, 20, 18, 210)
+
+    if beat_key == "ground_departure":
+        pts = [(52, h - 46), (150, h - 86), (255, h - 70), (370, h - 120), (w - 46, h - 104)]
+        draw.line(pts, fill=amber, width=8)
+        for px, py in pts[1:-1]:
+            draw.ellipse([px - 12, py - 8, px + 12, py + 8], fill=green)
+            draw.ellipse([px - 5, py - 18, px + 5, py - 8], fill=green)
+        for px, py in [(110, 72), (155, 58), (200, 76)]:
+            draw.rectangle([px - 12, py - 12, px + 12, py + 12], outline=amber, width=4)
+    elif beat_key == "field_lines":
+        for offset in [20, 70, 120, 170]:
+            draw.arc([offset, 40, offset + 260, h + 80], 210, 335, fill=amber, width=5)
+        for px, py in [(280, 102), (350, 176), (220, 224)]:
+            draw.line([px - 15, py - 15, px + 15, py + 15], fill=red, width=5)
+            draw.line([px + 15, py - 15, px - 15, py + 15], fill=red, width=5)
+        draw.arc([40, 30, 122, 112], 20, 330, fill=blue, width=5)
+    elif beat_key == "leaf_prey":
+        cx, cy = int(w * 0.58), int(h * 0.50)
+        for r in [34, 70, 108]:
+            draw.ellipse([cx - r, cy - r, cx + r, cy + r], outline=green, width=5)
+        draw.ellipse([cx - 12, cy - 8, cx + 12, cy + 8], fill=ink)
+        draw.text((cx + 35, cy - 42), "?", font=font(54, True), fill=amber)
+    elif beat_key == "threshold_cross":
+        for start in range(-40, w + 60, 44):
+            draw.line([start, h - 30, start + 24, h - 96], fill=red, width=7)
+        draw.line([(48, h - 58), (155, h - 118), (255, h - 106), (370, h - 165)], fill=green, width=6)
+        draw.polygon([(w - 100, 62), (w - 56, 142), (w - 146, 142)], outline=red, fill=(255, 92, 83, 55))
+    elif beat_key == "sudden_attention":
+        for x in [140, 210, 280, 350]:
+            draw.line([x, 30, x + 28, 118], fill=blue, width=6)
+            draw.line([x + 28, 118, x - 12, 104], fill=blue, width=6)
+        for r in [60, 104, 148]:
+            draw.arc([w // 2 - r, 12, w // 2 + r, 12 + r], 20, 160, fill=amber, width=5)
+    elif beat_key == "brush_rustle":
+        door = [int(w * 0.55), int(h * 0.32), int(w * 0.88), int(h * 0.86)]
+        draw.rounded_rectangle(door, radius=18, outline=amber, width=7, fill=(255, 198, 69, 28))
+        draw.arc([door[0] - 40, door[1] + 20, door[2] + 40, door[3] + 60], 200, 340, fill=green, width=5)
+        draw.text((door[0] + 30, door[1] + 35), "?", font=font(72, True), fill=red)
+        draw.ellipse([door[0] - 28, door[3] - 46, door[0] + 18, door[3] - 16], fill=green)
+    else:
+        draw.arc([70, 58, w - 70, h - 58], 0, 320, fill=amber, width=6)
+        draw.text((w - 145, h - 130), "CASE", font=font(34, True), fill=red)
+    return layer.convert("RGB")
 
 
 def write_vlog_plan(path: Path, selected: list[dict[str, Any]]) -> None:
@@ -606,6 +818,13 @@ def wrap(text: str, width: int) -> str:
     lines: list[str] = []
     cur = ""
     for word in words:
+        if len(word) > width:
+            if cur:
+                lines.append(cur)
+                cur = ""
+            for i in range(0, len(word), width):
+                lines.append(word[i:i + width])
+            continue
         if len(cur) + len(word) + 1 > width:
             if cur:
                 lines.append(cur)

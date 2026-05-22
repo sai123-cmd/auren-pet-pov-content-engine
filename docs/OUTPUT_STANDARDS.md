@@ -36,7 +36,7 @@ Required:
 - each panel is grounded in one or more real evidence frames,
 - the rendered panel is redrawn, not photo-filtered,
 - real event and scene remain recognizable,
-- pet imagination is added lightly: scent trails, thought bubbles, map marks, motion arcs,
+- pet imagination is added lightly and tied to the recognized event: scent trails for tracking, map marks for patrol, danger lines for thresholds, ear-alert marks for sudden attention,
 - final text is added locally or in a controlled layout so model text does not become gibberish.
 
 Rejected:
@@ -44,7 +44,8 @@ Rejected:
 - pure text-to-image scene invention,
 - edge-detection or posterize photo filters,
 - collage screenshots presented as comics,
-- panels that ignore the original scene or event.
+- panels that ignore the original scene or event,
+- repeated generic "cute cat" overlays that do not express the specific action/event.
 
 Implementation boundary:
 

@@ -24,6 +24,7 @@ python scripts/evaluate_content_outputs.py \
   --output-dir outputs/cat_run/final_content_cat_v2 \
   --min-videos 6 \
   --min-events 5 \
+  --require-comic-plan \
   --write-report
 ```
 
@@ -32,6 +33,7 @@ The evaluator checks:
 - diary is continuous prose with first-person voice,
 - diary text is not mojibake,
 - highlight CSV has enough rows, sections, source videos, event labels, and source attribution,
+- when requested, comic imagination plan exists and every panel has event, joke, visual layer, and guardrail fields,
 - comic and reference images exist at usable resolution,
 - fallback/contact-sheet/storyboard images are not accepted as final comics,
 - vlog has video, audio, enough duration, and usable resolution.

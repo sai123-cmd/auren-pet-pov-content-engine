@@ -7,6 +7,7 @@ judge creative quality by itself, but it catches common failure modes:
 - diary degraded into a scene list,
 - diary text is mojibake,
 - highlight table is missing or too repetitive,
+- comic imagination plan is missing when required,
 - comic/reference images are missing or only a fallback storyboard exists,
 - vlog is missing video/audio streams or is too short.
 """
@@ -31,6 +32,7 @@ def main() -> None:
     parser.add_argument("--min-videos", type=int, default=2)
     parser.add_argument("--min-events", type=int, default=3)
     parser.add_argument("--min-vlog-duration", type=float, default=8.0)
+    parser.add_argument("--require-comic-plan", action="store_true", help="Require an event-linked comic imagination plan.")
     parser.add_argument("--write-report", action="store_true")
     args = parser.parse_args()
 
@@ -45,6 +47,8 @@ def main() -> None:
     }
     report["checks"].append(check_diary(out_dir))
     report["checks"].append(check_highlights(out_dir, args.min_highlights, args.min_videos, args.min_events))
+    if args.require_comic_plan:
+        report["checks"].append(check_comic_plan(out_dir))
     report["checks"].append(check_images(out_dir))
     report["checks"].append(check_vlog(out_dir, args.min_vlog_duration))
     report["summary"]["passed"] = all(check["passed"] for check in report["checks"])
@@ -145,6 +149,29 @@ def check_images(out_dir: Path) -> dict[str, Any]:
         "passed": passed,
         "details": details,
         "message": "Comic/reference images exist at usable resolution." if passed else "Comic/reference image check failed or only a fallback comic is present.",
+    }
+
+
+def check_comic_plan(out_dir: Path) -> dict[str, Any]:
+    path = find_first(out_dir, ["*comic_imagination_plan*.json"])
+    if not path:
+        return fail("comic_plan", "No event-linked comic imagination plan found.")
+    try:
+        panels = json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        return fail("comic_plan", f"Comic imagination plan is not valid JSON: {exc}")
+    complete = 0
+    for panel in panels:
+        if all(str(panel.get(key, "")).strip() for key in ["event", "story_joke", "visual_layer", "guardrail"]):
+            complete += 1
+    passed = len(panels) >= 6 and complete >= 6
+    return {
+        "name": "comic_plan",
+        "passed": passed,
+        "path": str(path),
+        "panel_count": len(panels),
+        "complete_panels": complete,
+        "message": "Comic imagination plan links each panel to event-specific fun." if passed else "Comic imagination plan is missing panel-level event, joke, visual layer, or guardrail fields.",
     }
 
 

@@ -24,10 +24,26 @@ The final Looki-like redraw currently requires an image-conditioned generation s
 1. Segment the source videos and run VLM recognition.
 2. Select comic candidates by readable frame, iconic posture, visible subject, event clarity, and story variety.
 3. Build a 6-panel evidence board from primary frames.
-4. Generate a redraw prompt that names the real events and forbids unrelated invention.
-5. Use an image-reference capable model/API to redraw the board as a single comic page.
-6. Add controlled captions locally if needed, so model text does not become unreadable.
-7. Run output QA and human review against `docs/OUTPUT_STANDARDS.md`.
+4. Generate an event-linked imagination plan for each panel.
+5. Generate a redraw prompt that names the real events, panel-specific imagination gags, and forbids unrelated invention.
+6. Use an image-reference capable model/API to redraw the board as a single comic page.
+7. Add controlled captions locally if needed, so model text does not become unreadable.
+8. Run output QA and human review against `docs/OUTPUT_STANDARDS.md`.
+
+## Event-Linked Imagination
+
+The imagination layer must be caused by the recognized pet event. Generic cute decorations are not enough.
+
+Examples for cat POV:
+
+- `ground_patrol`: paw-map marks, pebble buttons, low-camera route arrows.
+- `prey_track`: whisker radar rings, leaf-rustle marks, a tiny suspicious shadow.
+- `threshold_pause`: dashed safe/danger boundary, stealth path, exposure timer.
+- `sudden_attention`: ear-alert lightning marks, sky/building signal pings.
+- `brush_inspection`: hay secret door, question-mark crumbs, cautious paw reaching in.
+- `owner_check_in`: distant human footsteps as oversized map pins.
+
+This is the difference between a competent redraw and a comic: the real frame says where the cat is; the event-linked imagination says what the cat thinks is happening.
 
 ## Panel Selection
 
@@ -46,7 +62,8 @@ Avoid:
 - six panels from the same-looking ground texture,
 - frames where motion makes the event unreadable,
 - panel captions that carry the whole meaning while the image shows nothing,
-- unrelated fantasy additions that hide the source event.
+- unrelated fantasy additions that hide the source event,
+- generic whisker/scent overlays repeated on every panel without a panel-specific reason.
 
 ## Species Notes
 

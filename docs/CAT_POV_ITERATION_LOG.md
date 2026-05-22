@@ -67,3 +67,16 @@ Local result:
 - It produced a fresh vlog render with the existing MiniMax instrumental BGM.
 
 The complete generated comic sample remains the v5 assisted redraw until an image-reference generation API is wired into the open-source pipeline.
+
+## 2026-05-22 Comic Imagination Fix
+
+User review found that the current comic direction was too close to plain redraw: recognizable, but not funny enough and not imaginative enough for cat POV.
+
+Pipeline update:
+
+- Added an event-linked comic imagination plan for every selected panel.
+- Added deterministic `cat_comic_event_imagination_storyboard_v2.jpg` review boards that draw the planned cat-thought overlay on top of real frames.
+- Updated comic prompts so each panel's gag is caused by the recognized event, for example route map for ground patrol, radar for prey/rustle, danger line for threshold crossing, and antenna marks for sudden attention.
+- Updated output standards so repeated generic cute overlays are not accepted.
+
+The storyboard is not final comic art. It is a grounding and direction asset for the later image-reference redraw model.

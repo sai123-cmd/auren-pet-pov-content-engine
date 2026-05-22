@@ -144,6 +144,7 @@ python scripts/evaluate_content_outputs.py \
   --output-dir outputs/cat_run/final_content_cat_v2 \
   --min-videos 6 \
   --min-events 5 \
+  --require-comic-plan \
   --write-report
 ```
 
