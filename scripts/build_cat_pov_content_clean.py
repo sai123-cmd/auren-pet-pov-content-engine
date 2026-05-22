@@ -144,7 +144,7 @@ def main() -> None:
     if render_pov_locked_comic_page:
         render_pov_locked_comic_page(
             highlights_json,
-            out / "cat_comic_page_looki_pov_locked_generated_v4.png",
+            out / "comic_pov_lock_qa.png",
             out / "comic_pov_locked_frames",
         )
     write_vlog_plan(out / "cat_vlog_plan_clean.md", selected)
@@ -442,7 +442,8 @@ def write_run_notes(path: Path, selected: list[dict[str, Any]]) -> None:
         "- MiniMax VLM analyzed image strips, not audio.",
         "- Source audio is preserved and mixed into the vlog.",
         "- True audio understanding still needs ASR/audio-event labels for meows, bells, owner speech, wind, and sudden sounds.",
-        "- Final mature comic should be generated from `cat_comic_reference_mature_real_scenes.jpg` and `cat_comic_mature_prompt.md`.",
+        "- `comic_pov_lock_qa.png` is an internal perspective QA artifact, not a user-facing final comic.",
+        "- Final mature comic should be generated from `cat_comic_reference_mature_real_scenes.jpg` and `cat_comic_mature_prompt.md`, then rejected if it drifts away from the POV QA artifact.",
         "",
         f"- selected highlights: {len(selected)}",
     ]

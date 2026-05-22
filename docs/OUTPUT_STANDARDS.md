@@ -54,6 +54,7 @@ Rejected:
 Implementation boundary:
 
 - the pipeline may create reference boards, panel briefs, and fallback storyboards deterministically,
+- POV-lock / perspective QA pages are internal review artifacts and must not be accepted as final comics,
 - final Looki-like art must be mature narrative comic art using image-reference grounding or another method that preserves the real scene,
 - plain text-to-image is useful only for experiments, not accepted as final comic output.
 

@@ -228,8 +228,6 @@ def find_first(folder: Path, patterns: list[str]) -> Path | None:
 def artifact_score(path: Path) -> tuple[int, str]:
     name = path.name.lower()
     score = 0
-    if "pov_locked" in name or "pov-lock" in name:
-        score += 80
     if "looki" in name:
         score += 50
     if "generated" in name:
@@ -255,7 +253,7 @@ def unique_nonempty(rows: list[dict[str, str]], key: str) -> set[str]:
 
 def is_fallback_comic(path: Path) -> bool:
     name = path.name.lower()
-    return any(token in name for token in ["fallback", "contact_sheet", "storyboard", "reference", "draft"])
+    return any(token in name for token in ["fallback", "contact_sheet", "storyboard", "reference", "draft", "pov_locked", "pov_lock", "qa"])
 
 
 def fail(name: str, message: str) -> dict[str, Any]:
