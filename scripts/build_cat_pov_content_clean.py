@@ -17,83 +17,100 @@ from PIL import Image, ImageDraw, ImageFont
 BEATS = [
     {
         "key": "ground_patrol",
-        "title": "地面上线",
-        "caption": "地面上线了",
+        "title": "碎石路开场",
+        "caption": "路先醒了",
+        "anchor_keywords": ["gravel path", "path or road", "low-angle pov"],
+        "avoid_keywords": ["face", "nose", "close-up", "extreme close-up"],
         "event_keywords": ["ground_patrol", "owner_check_in"],
         "action_keywords": ["walk", "creep", "search"],
         "time_preference": 0.10,
-        "diary": "我把镜头贴低，先让地面向我报到。碎石、土路、人的脚步和风里留下的味道，全都排着队递交情报。",
-        "comic": "低角度地面巡逻，远处有人或路面纹理，想象成猫咪打开秘密案卷。",
+        "diary": "我先让胡须贴近碎石路。法国的早晨没有大声说话，只把小石头、草边和树影一粒一粒摆到我面前。",
+        "comic": "低角度碎石路开场，猫耳朵或胡须在画面边缘，像一张旅行地图刚被摊开。",
     },
     {
-        "key": "brush_inspection",
-        "title": "草丛侦查",
-        "caption": "草里有线索",
-        "event_keywords": ["brush_inspection", "prey_track"],
-        "action_keywords": ["search", "stalk", "sniff", "creep"],
-        "time_preference": 0.30,
-        "diary": "草丛当然不是草丛那么简单。每一根草都像细长的便签，我把鼻子凑过去，读到一半还要假装只是路过。",
-        "comic": "高草从猫视角包围画面，像一条绿色密道，藏着只给猫看的线索。",
+        "key": "roof_view",
+        "title": "苔藓屋顶",
+        "caption": "屋顶也有味道",
+        "anchor_keywords": ["roof", "tiled roof", "moss-covered", "countryside"],
+        "scene_keywords": ["roof", "tiled", "moss", "countryside"],
+        "event_keywords": ["ground_patrol", "new_scene_discovery"],
+        "action_keywords": ["walk", "look_around", "pause_observe"],
+        "time_preference": 0.18,
+        "diary": "没走多久，我看到一片长着苔藓的旧屋顶。人类会说那是风景，我会说那是一块被太阳晒暖的老饼干。",
+        "comic": "苔藓屋顶和乡野远景，画成像古老小城堡的高处发现，猫把它想象成可以闻的明信片。",
     },
     {
-        "key": "rustle",
-        "title": "半个声音",
-        "caption": "那边动了",
-        "event_keywords": ["prey_track", "sound_triggered_attention", "sudden_attention"],
-        "action_keywords": ["stalk", "look_around", "pause_observe"],
-        "time_preference": 0.40,
-        "diary": "有一小块叶子突然不太守规矩。我没有扑过去，我只是把全身的注意力往那边推了一点点。",
-        "comic": "落叶或树枝轻轻动，画面用光影和飘起的叶子表现悬念，不要抽象雷达图标。",
+        "key": "riverbank",
+        "title": "水边停顿",
+        "caption": "水边换了气味",
+        "anchor_keywords": ["riverbank", "water", "muddy"],
+        "scene_keywords": ["riverbank", "water", "muddy", "pond", "lake"],
+        "event_keywords": ["threshold_pause", "ground_patrol"],
+        "action_keywords": ["sniff", "pause_observe"],
+        "time_preference": 0.28,
+        "diary": "水边的空气突然变湿，泥土把声音压低。我停下来闻了一会儿，确认这条路不是简单地往前走，它还会横着拐进水里。",
+        "comic": "泥土水边和近距离胡须，画成猫在水气前停步，水面像打开了另一页地图。",
     },
     {
-        "key": "threshold",
-        "title": "边界穿行",
-        "caption": "别被发现",
-        "event_keywords": ["threshold_pause", "new_scene_discovery"],
-        "action_keywords": ["pause_observe", "walk", "creep"],
-        "time_preference": 0.52,
-        "diary": "走到开阔处时，我先停了半拍。聪明的猫从不随便暴露自己，尤其是世界看起来很大的时候。",
-        "comic": "门、路口、建筑边缘或开阔地，猫从低处观察，像小小侦探准备穿过边界。",
+        "key": "cat_close",
+        "title": "鼻子抢镜",
+        "caption": "我来确认一下",
+        "anchor_keywords": ["face", "nose", "whiskers", "close-up", "extreme close-up"],
+        "scene_keywords": ["face", "nose", "whiskers", "close-up"],
+        "event_keywords": ["owner_check_in", "ground_patrol", "sudden_attention"],
+        "action_keywords": ["sniff", "walk", "search"],
+        "time_preference": 0.38,
+        "diary": "后来我的鼻子决定亲自入镜。它一向比我积极，尤其遇到碎石、草根和不肯说明来历的风。",
+        "comic": "猫鼻子或脸部突然贴近画面，做成幽默转场，像猫把镜头抢过来盖章确认。",
     },
     {
-        "key": "look_up",
-        "title": "抬头接收",
-        "caption": "上面也有情报",
-        "event_keywords": ["sudden_attention", "quiet_observation"],
-        "action_keywords": ["look_up", "pause_observe"],
-        "time_preference": 0.58,
-        "diary": "我忽然抬头。树冠、天空和屋檐也会说话，只是它们说得比较高，人类听不见。",
-        "comic": "猫耳朵或头顶在画面底部，向上看树冠、天空或建筑，像收到来自上方的神秘消息。",
+        "key": "woodpile",
+        "title": "木柴堡垒",
+        "caption": "这里像一堵墙",
+        "anchor_keywords": ["woodpile", "logs", "stacked"],
+        "scene_keywords": ["woodpile", "logs", "wood", "stacked"],
+        "event_keywords": ["threshold_pause", "new_scene_discovery", "ground_patrol"],
+        "action_keywords": ["sniff", "look_up", "creep"],
+        "time_preference": 0.48,
+        "diary": "然后我遇见一整面木柴墙。它们排得太整齐，像在假装自己不是秘密基地。",
+        "comic": "木柴堆画成森林边的堡垒，猫从低处经过，想象木柴后面藏着另一条小路。",
     },
     {
-        "key": "owner_check",
-        "title": "人类脚步",
-        "caption": "人类也在场",
-        "event_keywords": ["owner_check_in"],
-        "action_keywords": ["approach_human", "walk"],
-        "time_preference": 0.72,
-        "diary": "人类走在前面，脚步很大，判断力一般，但方向感今天勉强合格。我决定暂时把他们编入队伍。",
-        "comic": "低角度看见人的腿或脚步，猫把人类想象成移动路标或临时队友。",
+        "key": "forest_floor",
+        "title": "树根迷宫",
+        "caption": "下面也有路",
+        "anchor_keywords": ["forest floor", "mossy logs", "fallen branches", "twigs"],
+        "scene_keywords": ["mossy", "fallen", "branches", "leaves", "tree trunk", "forest floor"],
+        "event_keywords": ["brush_inspection", "ground_patrol", "prey_track"],
+        "action_keywords": ["sniff", "search", "creep"],
+        "time_preference": 0.62,
+        "diary": "真正复杂的是树根下面。落叶、苔藓和断枝挤在一起，像一座只允许小动物进入的迷宫。",
+        "comic": "森林地面、苔藓树根和断枝，画成猫眼里的小型迷宫，光点像路标。",
     },
     {
-        "key": "quiet_watch",
-        "title": "安静观察",
-        "caption": "先盯一会儿",
-        "event_keywords": ["quiet_observation"],
-        "action_keywords": ["pause_observe", "look_around"],
-        "time_preference": 0.82,
-        "diary": "有些线索不能追，要盯。盯得足够久，它们会自己露出一点点破绽。",
-        "comic": "安静停顿的低视角，环境有层次，猫的耳朵或影子在边缘，气氛像侦探暂停思考。",
+        "key": "human_van",
+        "title": "人类据点",
+        "caption": "他们也在这儿",
+        "anchor_keywords": ["person", "human", "white van", "van", "parked"],
+        "avoid_keywords": ["construction vehicle", "excavator", "heavy machinery"],
+        "scene_keywords": ["van", "vehicle", "person", "human", "machinery", "wheel"],
+        "event_keywords": ["owner_check_in", "ground_patrol"],
+        "action_keywords": ["approach_human", "walk", "climb"],
+        "time_preference": 0.80,
+        "diary": "快到后面，人类和车终于出现了。他们坐在那里，好像这片森林的临时售票员。",
+        "comic": "白色车、人类腿或车轮，猫从低处看，把这里当作旅途中的人类据点。",
     },
     {
         "key": "ending",
-        "title": "收进胡须",
-        "caption": "案件先收进胡须",
-        "event_keywords": ["ground_patrol", "quiet_observation", "new_scene_discovery"],
-        "action_keywords": ["walk", "pause_observe", "look_around"],
+        "title": "松针收尾",
+        "caption": "今天藏进松针里",
+        "anchor_keywords": ["evergreen", "pine", "needles", "underneath"],
+        "scene_keywords": ["evergreen", "pine", "branches", "needles", "underneath"],
+        "event_keywords": ["brush_inspection", "threshold_pause", "quiet_observation"],
+        "action_keywords": ["sniff", "hide", "stalk", "pause_observe"],
         "time_preference": 0.92,
-        "diary": "最后我把今天收进胡须里。别人说这是一趟散步，我说这是一份还没公开的调查报告。",
-        "comic": "温柔收尾，猫在自然光里安静停下，旁边有小小案卷或梦境化的回忆气泡。",
+        "diary": "最后我钻到松针下面。光变得很碎，空气也安静下来，我把今天整张法国气味地图折好，藏进身上。",
+        "comic": "松针和暗绿色枝叶包住画面，猫在里面安静收尾，像把一张旅行地图折进梦里。",
     },
 ]
 
@@ -162,8 +179,11 @@ def select_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
 def beat_score(row: dict[str, Any], beat: dict[str, Any], used_segments: set[str], used_time_bins: set[int], max_end: float) -> float:
     text = row["text"]
     score = row["fit_score"] / 20.0
+    score += sum(18 for key in beat.get("anchor_keywords", []) if key in text)
     score += sum(8 for key in beat["event_keywords"] if key in text)
     score += sum(4 for key in beat["action_keywords"] if key in text)
+    score += sum(10 for key in beat.get("scene_keywords", []) if key in text)
+    score -= sum(14 for key in beat.get("avoid_keywords", []) if key in text)
     if row["segment_id"] in used_segments:
         score -= 1000
     if int(float(row["start"]) // 600) in used_time_bins:
@@ -200,9 +220,9 @@ def public(item: dict[str, Any]) -> dict[str, Any]:
 def write_diary(path: Path, selected: list[dict[str, Any]]) -> None:
     body = [item["beat"]["diary"] for item in selected]
     text = [
-        "# 今天，我把法国闻成了一份秘密档案",
+        "# 今天，我把法国折成了一张气味地图",
         "",
-        "今天出门的时候，我本来只是想确认一下地面是否还在。结果刚把镜头放低，世界就开始交代事情：路面先递来碎石味，草丛随后压低声音，远处的人类脚步则大摇大摆地路过，好像他们才是队长。",
+        "今天出门的时候，我本来只是想确认一下这条路有没有认真准备好。结果刚把胡须贴近地面，法国就开始一层一层打开：先是碎石路，然后是苔藓屋顶，再往后是水边、木柴、树根和人类停在森林边的小车。",
         "",
         " ".join(body[:3]),
         "",
@@ -210,7 +230,7 @@ def write_diary(path: Path, selected: list[dict[str, Any]]) -> None:
         "",
         " ".join(body[6:]),
         "",
-        "所以这不是一段普通散步。普通散步不会让草叶装作无辜，不会让树冠从上方发来消息，也不会让人的鞋子在我面前留下那么多值得归档的脚注。等我回去趴下时，今天的案子已经有了结论：法国很大，线索很多，我这只猫暂时没有被世界发现。",
+        "所以这不是一段普通散步。普通散步不会经过屋顶和水气，不会让木柴堆看起来像堡垒，也不会把车边的人类缩成低低的风景。等我回去趴下时，今天的结论已经很清楚：法国很大，路很多，我只负责把它们一条一条闻出来。",
     ]
     path.write_text("\n".join(text), encoding="utf-8")
 
@@ -268,19 +288,19 @@ Style: soft digital watercolor, clean black gutters, cinematic lighting, express
 
 Grounding: keep the real cat POV events recognizable: low outdoor paths, grass, leaves, people/feet if visible, trees/sky, boundaries, quiet observation. The cat may be implied by ears, paws, whiskers, shadow, or thought bubbles at the frame edge.
 
-Story arc: a cat in France treats a calming outdoor walk as a secret detective investigation.
+Story arc: a cat in France turns one long outdoor walk into a scent-map travelogue: gravel road, mossy roof, wet riverbank, nose close-up, woodpile fortress, forest-floor maze, human van camp, evergreen hiding place.
 
 Panels:
 {chr(10).join(panel_lines)}
 
-Text: use only short readable Chinese bubbles, preferably these exact short phrases: 地面上线了, 草里有线索, 那边动了, 别被发现, 上面也有情报, 人类也在场, 案件先收进胡须.
+Text: use only short readable Chinese bubbles, preferably these exact short phrases: 路先醒了, 屋顶也有味道, 水边换了气味, 我来确认一下, 这里像一堵墙, 下面也有路, 他们也在这儿, 今天藏进松针里.
 
 Avoid: analysis symbols, radar circles, warning triangles, route-map overlays, UI graphics, debug marks, raw screenshots, contact sheet, storyboard, photo filter, unrelated fantasy, generic cute-cat portrait page, unreadable text, watermark."""
     path.write_text("# 成熟猫咪 POV 漫画生成提示\n\n```text\n" + prompt + "\n```\n", encoding="utf-8")
 
 
 def write_vlog_plan(path: Path, selected: list[dict[str, Any]]) -> None:
-    lines = ["# 猫咪 POV Vlog 剪辑方案", "", "片名：今天，我把法国闻成了一份秘密档案", ""]
+    lines = ["# 猫咪 POV Vlog 剪辑方案", "", "片名：今天，我把法国折成了一张气味地图", ""]
     for idx, item in enumerate(selected, 1):
         row, beat = item["row"], item["beat"]
         lines.append(f"{idx}. {beat['title']} | {row['segment_id']} | {fmt(row['start'])}-{fmt(row['end'])} | {beat['caption']}")
