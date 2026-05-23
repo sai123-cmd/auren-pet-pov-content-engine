@@ -8,7 +8,7 @@ Use the orchestrator for normal local runs:
 python scripts/run_auren_pipeline.py \
   --source-dir /path/to/pet_pov_videos \
   --output-dir outputs/run_001 \
-  --profile cat
+  --profile dog
 ```
 
 Add `--run-vlm --build-content` when MiniMax credentials are available and you want final content in the same command.
@@ -47,10 +47,10 @@ Use a species profile when known:
 
 ```bash
 python scripts/prepare_vlm_jobs_v3.py \
-  --v2-dir outputs/cat_run/prelabels_v2 \
-  --output-dir outputs/cat_run/vlm_jobs_v3 \
+  --v2-dir outputs/run_001/prelabels_v2 \
+  --output-dir outputs/run_001/vlm_jobs_v3 \
   --per-mode 36 \
-  --profile cat
+  --profile dog
 ```
 
 The VLM output should answer:
@@ -66,7 +66,6 @@ Profiles tune label hints without changing the strict output schema:
 
 - `generic`: general pet POV labels.
 - `dog`: dog-specific actions and events such as swim, chase, grass exploration, and human connection.
-- `cat`: cat-specific actions and events such as stalk, hide, perch, threshold pause, prey tracking, sudden attention, and brush inspection.
 
 `run_minimax_vlm_batch.py` also normalizes free-form model text back into the active profile labels. This is important because a VLM may describe an action as a sentence even when the prompt asks for label IDs.
 
@@ -81,25 +80,6 @@ Use `build_auren_content_v2_generic.py` to create:
 - vlog edit plan,
 - storyboard dashboard,
 - rendered vlog.
-
-For cat POV, use `build_cat_pov_content_v2.py`. It selects cat-specific beats rather than dog-style action beats:
-
-- ground patrol,
-- field or threshold crossing,
-- prey or rustle attention,
-- sudden head turn,
-- brush or hiding inspection,
-- quiet ending.
-
-The cat builder also handles no-audio scientific footage by creating a silent bed before mixing BGM, so CatCam-like data can still produce a watchable vlog.
-
-If using Zenodo CatCam tar archives locally, convert them first:
-
-```bash
-python scripts/convert_catcam_tar_to_mp4.py \
-  --input-dir /path/to/catcam_tars \
-  --output-dir outputs/catcam_mp4
-```
 
 For final comic rendering, follow `docs/COMIC_GENERATION.md`. The local pipeline prepares grounded frames and briefs, but final Looki-like redraw requires an image-reference generation step.
 

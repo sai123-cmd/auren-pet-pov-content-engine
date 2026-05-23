@@ -30,7 +30,7 @@ def main() -> None:
     parser.add_argument("--v2-dir", required=True)
     parser.add_argument("--output-dir", required=True)
     parser.add_argument("--per-mode", type=int, default=36)
-    parser.add_argument("--profile", choices=["generic", "dog", "cat"], default="generic")
+    parser.add_argument("--profile", choices=["generic", "dog"], default="generic")
     args = parser.parse_args()
 
     v2_dir = Path(args.v2_dir).resolve()
@@ -203,7 +203,6 @@ def build_prompt(row: dict[str, str], profile: str = "generic") -> str:
     profile_guidance = {
         "generic": "Use general pet POV labels. Do not assume species if it is not visible or known from source context.",
         "dog": "Use dog-specific POV judgment: social connection, running, sniffing, swimming, grass exploration, and owner interaction are often important.",
-        "cat": "Use cat-specific POV judgment: quiet scanning, stalking, hiding, threshold pauses, perching, prey attention, window watching, sudden head turns, and brush inspection are often important.",
     }[profile]
     return f"""You are annotating pet first-person wearable camera footage for AUREN.
 
@@ -236,13 +235,7 @@ Return STRICT JSON with these keys:
 
 
 def profile_schema(profile: str) -> dict[str, list[str]]:
-    base_subjects = ["owner", "human", "dog", "cat", "animal", "water", "grass", "brush", "toy", "food", "ground", "building", "vehicle", "unknown"]
-    if profile == "cat":
-        return {
-            "visible_subjects": base_subjects + ["window", "shelf", "fence", "tree", "prey", "bird", "rodent", "litter_box", "scratching_post"],
-            "pet_action": ["walk", "creep", "stalk", "sniff", "search", "look_around", "look_up", "hide", "perch", "climb", "jump", "pause_observe", "approach_human", "approach_animal", "unclear"],
-            "pet_event": ["ground_patrol", "prey_track", "brush_inspection", "threshold_pause", "sudden_attention", "window_watch", "perch_or_climb", "owner_check_in", "quiet_observation", "new_scene_discovery", "sound_triggered_attention", "low_signal"],
-        }
+    base_subjects = ["owner", "human", "dog", "animal", "water", "grass", "brush", "toy", "food", "ground", "building", "vehicle", "unknown"]
     if profile == "dog":
         return {
             "visible_subjects": base_subjects + ["leash", "river", "stick", "ball", "trail", "bench"],
@@ -266,7 +259,7 @@ Profile: `{profile}`
 The model should:
 
 - be literal;
-- avoid inventing owner/cat/dog/toy if not visible;
+- avoid inventing owner/dog/animal/toy if not visible;
 - separate observable action from narrative event;
 - score vlog/diary/comic independently;
 - explain corrections to V2 labels.

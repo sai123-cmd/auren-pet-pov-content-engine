@@ -22,7 +22,7 @@ Requirements:
 
 Use for local model and workflow validation only.
 
-- Academic or non-commercial datasets, such as Zenodo CatCam.
+- Academic or non-commercial datasets.
 - Research supplementary videos with restrictions.
 - Any footage whose license is clear enough for local experimentation but not compatible with public MIT examples.
 
@@ -62,9 +62,3 @@ Every run should have a `source_manifest.csv` or equivalent with:
 - `derived_media_committed`
 - `privacy_notes`
 - `attribution`
-
-## Current Cat POV Status
-
-- Wikimedia/PLOS cat clips: open enough for small public workflow examples with attribution.
-- Zenodo CatCam: useful local validation material, but CC BY-NC / academic-use-only, so keep raw and derived media local.
-- Modern color collar-cam clips: still needed, ideally user-owned or directly licensed.

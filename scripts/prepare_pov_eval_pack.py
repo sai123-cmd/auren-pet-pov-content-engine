@@ -215,7 +215,7 @@ def write_label_schema(out_dir: Path) -> None:
         "segment_unit": "2-5 seconds",
         "fields": {
             "scene": ["park", "river_lake", "beach", "street", "home", "trail", "unknown"],
-            "visible_subjects": ["owner", "stranger", "dog", "cat", "water", "toy", "food", "vehicle", "leash", "ground"],
+            "visible_subjects": ["owner", "stranger", "dog", "animal", "water", "toy", "food", "vehicle", "leash", "ground"],
             "pet_action": ["walk", "run", "sniff", "stop_observe", "turn_head", "approach_human", "approach_animal", "play", "drink", "unclear"],
             "sound_event": ["human_voice", "dog_bark", "water", "traffic", "leash_noise", "wind", "impact", "quiet", "unknown"],
             "motion_state": ["stable", "walking", "running", "shaky", "sudden_stop", "camera_blocked"],
@@ -245,7 +245,7 @@ The existing local pipeline proves the file-to-artifact loop, but it does not ye
 | --- | --- | --- | --- |
 | Dataset and benchmark | Learn egocentric task design and pet POV labels | DogCentric Activity Dataset, Ego4D, EPIC-KITCHENS | Use as references, not final commercial training corpus. |
 | Shot/segment candidates | Split long videos into reviewable 2-5s units | ffmpeg, PySceneDetect, TransNetV2 | Start here. It is robust and cheap. |
-| Visual scene/action understanding | Detect river/park/street/owner/cat, sniff/run/stop/turn | Qwen2.5-VL, InternVL, LLaVA-NeXT-Video, InternVideo | Use API or hosted model first; local model later if quality and cost justify it. |
+| Visual scene/action understanding | Detect river/park/street/owner/animal, sniff/run/stop/turn | Qwen2.5-VL, InternVL, LLaVA-NeXT-Video, InternVideo | Use API or hosted model first; local model later if quality and cost justify it. |
 | Audio understanding | Detect human voice, bark, water, traffic, sudden sounds | YAMNet, PANNs, CLAP, Whisper | Use YAMNet/PANNs for sound tags, Whisper for speech. |
 | Highlight scoring | Rank memorable moments, not just fast motion | AUREN custom scoring with model evidence + human labels | Must be proprietary AUREN logic. |
 | Diary generation | Turn evidence into pet memory writing | LLM prompt with strict JSON evidence | Only meaningful after upstream evidence improves. |

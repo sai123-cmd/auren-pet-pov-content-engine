@@ -37,7 +37,7 @@ Required:
 - each panel preserves the actual POV/camera angle, horizon, object scale, and occlusion of its source frame,
 - the rendered panel is redrawn, not photo-filtered,
 - real event and scene remain recognizable,
-- pet imagination is added lightly and tied to the recognized event through natural comic storytelling such as thought bubbles, scent wisps, case-file fantasies, hidden-door gags, motion, lighting, and expression,
+- pet imagination is added lightly and tied to the recognized event through natural comic storytelling such as thought bubbles, scent wisps, small scene/object fantasies, hidden-door gags, motion, lighting, and expression,
 - final text is added locally or in a controlled layout so model text does not become gibberish.
 
 Rejected:
@@ -46,9 +46,9 @@ Rejected:
 - edge-detection or posterize photo filters,
 - collage screenshots presented as comics,
 - panels that ignore the original scene or event,
-- panels that add a recurring cat avatar, cat ears, cat face, paws, or whiskers that were not visible in that panel's source frame,
+- panels that add a recurring pet avatar, ears, face, paws, or whiskers that were not visible in that panel's source frame,
 - panels that turn first-person/collar-camera footage into a third-person, over-the-shoulder, or external cinematic camera,
-- repeated generic "cute cat" overlays that do not express the specific action/event,
+- repeated generic "cute pet" overlays that do not express the specific action/event,
 - analysis symbols presented as final art: radar circles, warning triangles, route-map overlays, debug UI, or meaningless icons.
 
 Implementation boundary:
@@ -80,15 +80,7 @@ Rejected:
 - no music or unbalanced music,
 - clips selected only by motion without event understanding.
 
-## Species-Specific Notes
-
-Dogs:
+## Dog Notes
 
 - more outdoor movement, social greeting, running, sniffing, owner-following,
 - highlights often involve speed, social contact, exploration, water/grass/toys.
-
-Cats:
-
-- more quiet observation, stalking, hiding, vertical surfaces, thresholds, windows, sudden attention,
-- audio may include meows, bells, indoor ambience, owner voice, prey-like sounds,
-- highlights may be subtle and should not be judged only by motion.

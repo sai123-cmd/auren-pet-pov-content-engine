@@ -22,7 +22,7 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--source-dir", required=True)
     parser.add_argument("--output-dir", required=True)
-    parser.add_argument("--profile", choices=["generic", "dog", "cat"], default="generic")
+    parser.add_argument("--profile", choices=["generic", "dog"], default="generic")
     parser.add_argument("--samples", type=int, default=8)
     parser.add_argument("--interval", type=int, default=2)
     parser.add_argument("--top-per-video", type=int, default=10)
@@ -73,14 +73,11 @@ def main() -> None:
     if args.build_content:
         if not results or not results.exists():
             raise SystemExit("--build-content requires --run-vlm or --results pointing to minimax_vlm_results.json.")
-        final_dir = out_dir / ("final_content_cat_v2" if args.profile == "cat" else "final_content_v2")
-        if args.profile == "cat":
-            cmd = ["build_cat_pov_content_v2.py", "--results", results, "--manifest", out_dir / "manifest.csv", "--output-dir", final_dir]
-            if args.bgm:
-                cmd.extend(["--bgm", Path(args.bgm).resolve()])
-            run_py(*cmd)
-        else:
-            run_py("build_auren_content_v2_generic.py", "--results", results, "--manifest", out_dir / "manifest.csv", "--output-dir", final_dir)
+        final_dir = out_dir / "final_content_v2"
+        cmd = ["build_auren_content_v2_generic.py", "--results", results, "--manifest", out_dir / "manifest.csv", "--output-dir", final_dir]
+        if args.bgm:
+            cmd.extend(["--bgm", Path(args.bgm).resolve()])
+        run_py(*cmd)
         if args.evaluate:
             run_py("evaluate_content_outputs.py", "--output-dir", final_dir, "--min-videos", args.min_videos, "--min-events", args.min_events, "--write-report")
 

@@ -21,7 +21,7 @@ For larger validation runs, raise diversity thresholds:
 
 ```bash
 python scripts/evaluate_content_outputs.py \
-  --output-dir outputs/cat_run/final_content_cat_v2 \
+  --output-dir outputs/dog_run/final_content_v2 \
   --min-videos 6 \
   --min-events 5 \
   --require-comic-plan \
@@ -49,11 +49,9 @@ Human review should answer product questions that a script cannot answer yet:
 - Are captions varied and in pet voice?
 - Does BGM support the edit without drowning the original ambience?
 
-## Species Review Notes
+## Dog Review Notes
 
 Dog POV review should look for high-energy movement, owner/social contact, grass/water/toy interaction, and clear action changes.
-
-Cat POV review should not overvalue speed. It should recognize subtle moments: threshold pauses, sudden attention, quiet stalking, hiding inspection, window/perch watching, owner check-ins, and prey/rustle tracking.
 
 ## Known Limits
 

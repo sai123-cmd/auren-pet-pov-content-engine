@@ -4,7 +4,7 @@ The comic product is not a photo filter and not pure text-to-image generation. I
 
 ## Why Text-Only Fails
 
-A text prompt can describe "cat in grass" or "dog near river", but it loses the actual POV geometry: camera height, visible paws or collar angle, owner position, waterline, bushes, doorway, lighting, and the odd details that make the event feel real. That is why text-only generation often produces a pleasant but unrelated comic.
+A text prompt can describe "dog near river", but it loses the actual POV geometry: camera height, visible paws or collar angle, owner position, waterline, bushes, doorway, lighting, and the odd details that make the event feel real. That is why text-only generation often produces a pleasant but unrelated comic.
 
 ## Current Contract
 
@@ -22,7 +22,7 @@ The deterministic local renderer is acceptable for pipeline validation only. The
 
 ## POV Lock
 
-Grounding is not enough if the redraw changes camera position. A valid POV comic must preserve the source frame's camera angle, horizon, object scale, occlusion, and visible subject boundaries. Do not add a recurring cat avatar, ears, paws, face, whiskers, or body unless that exact element is already visible in that panel's source frame. Do not convert collar-cam or first-person footage into third-person, over-the-shoulder, or cinematic external camera shots.
+Grounding is not enough if the redraw changes camera position. A valid POV comic must preserve the source frame's camera angle, horizon, object scale, occlusion, and visible subject boundaries. Do not add a recurring pet avatar, ears, paws, face, whiskers, or body unless that exact element is already visible in that panel's source frame. Do not convert collar-cam or first-person footage into third-person, over-the-shoulder, or cinematic external camera shots.
 
 The pipeline should keep a `pov_lock_qa` artifact that is rendered directly from exact source frames. This is an internal perspective contract, not a user-facing comic. Do not present it as final content. A prettier generated image is still rejected if it drifts away from the POV QA artifact.
 
@@ -42,16 +42,16 @@ The pipeline should keep a `pov_lock_qa` artifact that is rendered directly from
 
 The imagination layer must be caused by the recognized pet event. Generic cute decorations are not enough.
 
-Examples for cat POV:
+Examples for dog POV:
 
-- `ground_patrol`: low gravel world redrawn like a tiny detective case, with a short thought bubble.
-- `prey_track`: leaves, grass, or twigs subtly moving, with suspenseful lighting and a half-seen clue.
-- `threshold_pause`: a low-angle opening, gate, building edge, or courtyard composed like a stealthy crossing.
-- `sudden_attention`: the cat looking up, with sky/building/light treated like a mysterious message.
-- `brush_inspection`: hay or dry grass hiding a small imagined door or secret answer.
-- `owner_check_in`: distant human legs/footsteps as part of the scene, not UI pins.
+- `grass_exploration`: grass, leaves, and scent trails become a readable little discovery.
+- `water_adventure`: splashes, shoreline, and wet light carry the joke or emotion.
+- `human_connection`: owner legs, leash, hands, or footsteps stay in the real scene, not UI pins.
+- `animal_social_moment`: another animal becomes the focus of greeting, curiosity, or surprise.
+- `search_or_inspect`: objects, bushes, wheels, doors, or benches become a small mystery grounded in the frame.
+- `new_scene_discovery`: a doorway, path, park opening, or river reveal gets a visual payoff.
 
-This is the difference between a competent redraw and a comic: the real frame says where the cat is; the event-linked imagination says what the cat thinks is happening. Do not use radar circles, warning triangles, route maps, or debug icons in the final page.
+This is the difference between a competent redraw and a comic: the real frame says where the pet is; the event-linked imagination says what the pet thinks is happening. Do not use radar circles, warning triangles, route maps, or debug icons in the final page.
 
 ## Panel Selection
 
@@ -73,11 +73,9 @@ Avoid:
 - unrelated fantasy additions that hide the source event,
 - generic whisker/scent overlays repeated on every panel without a panel-specific reason.
 
-## Species Notes
+## Dog Notes
 
 Dog comic beats usually work well with water, running, chasing, grass exploration, human greeting, toys, and owner-following.
-
-Cat comic beats are subtler: threshold pauses, sudden attention, field patrol, prey/rustle tracking, hiding inspection, perches, windows, owner check-ins, and quiet surveillance. The comic should make those small moments visible with natural story staging, thought bubbles, scent/motion atmosphere, and small imagined props that belong in the scene.
 
 ## Automation Gap
 

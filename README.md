@@ -52,7 +52,7 @@ Prepare a POV evaluation pack:
 python scripts/run_auren_pipeline.py \
   --source-dir /path/to/pet_pov_videos \
   --output-dir outputs/run_001 \
-  --profile cat
+  --profile dog
 ```
 
 Or run each step manually:
@@ -104,20 +104,20 @@ One-command MiniMax + content generation:
 ```bash
 MINIMAX_API_KEY=... python scripts/run_auren_pipeline.py \
   --source-dir /path/to/pet_pov_videos \
-  --output-dir outputs/cat_run \
-  --profile cat \
+  --output-dir outputs/dog_run \
+  --profile dog \
   --run-vlm \
   --build-content \
-  --bgm outputs/cat_run/cat_bgm.mp3
+  --bgm outputs/dog_run/dog_bgm.mp3
 ```
 
-Cat-specific content builds emit a draft grounded comic layout (`cat_comic_draft_grounded_layout_v2.png`) in addition to the reference board and storyboard. This draft is not the user-facing mature comic. Run `evaluate_content_outputs.py` only after a mature image/reference-grounded comic has been generated or copied into the final content folder.
+Content builds emit a grounded comic brief, reference board, storyboard dashboard, diary files, and vlog assets. Internal storyboards and deterministic drafts are not user-facing mature comics. Run `evaluate_content_outputs.py` only after a mature image/reference-grounded comic has been generated or copied into the final content folder.
 
 Generate an instrumental BGM track with MiniMax:
 
 ```bash
 MINIMAX_API_KEY=... python scripts/generate_minimax_bgm.py \
-  --out outputs/cat_run/cat_bgm.mp3
+  --out outputs/dog_run/dog_bgm.mp3
 ```
 
 Build content outputs:
@@ -141,35 +141,11 @@ Use stricter diversity thresholds for larger validation runs:
 
 ```bash
 python scripts/evaluate_content_outputs.py \
-  --output-dir outputs/cat_run/final_content_cat_v2 \
+  --output-dir outputs/dog_run/final_content_v2 \
   --min-videos 6 \
   --min-events 5 \
   --require-comic-plan \
   --write-report
-```
-
-For cat-specific POV runs, use the dedicated builder:
-
-```bash
-python scripts/prepare_vlm_jobs_v3.py \
-  --v2-dir outputs/cat_run/prelabels_v2 \
-  --output-dir outputs/cat_run/vlm_jobs_v3 \
-  --per-mode 36 \
-  --profile cat
-
-python scripts/build_cat_pov_content_v2.py \
-  --results outputs/cat_run/minimax_vlm_v1/minimax_vlm_results.json \
-  --manifest outputs/cat_run/manifest.csv \
-  --output-dir outputs/cat_run/final_content_cat_v2 \
-  --bgm outputs/cat_run/cat_bgm.mp3
-```
-
-Convert local Zenodo CatCam tar archives when you need extra academic validation clips:
-
-```bash
-python scripts/convert_catcam_tar_to_mp4.py \
-  --input-dir /path/to/catcam_tars \
-  --output-dir outputs/catcam_mp4
 ```
 
 ## Dog POV Example
@@ -183,28 +159,6 @@ The repository includes a small example output pack under [examples/dog_pov_test
 - rendered vlog: `assets/vlog_v2_pet_pov_story.mp4`
 
 Raw source videos are not included.
-
-## Cat POV Example
-
-The repository also includes a cat-specific evaluation pack under [examples/cat_pov_eval_001](examples/cat_pov_eval_001).
-
-This run uses openly licensed Wikimedia Commons supplementary videos from Lesica et al. 2006. The source clips are short, monochrome, and low resolution, so the cat workflow is intentionally different from the dog workflow:
-
-- diary: quiet stalking/observation voice, not a dog-style outing,
-- highlights: leaf-floor scanning, prey attention, sudden upward attention, brush/nest investigation,
-- comic: black-and-white cat POV redraw with whisker radar, scent lines, and blank thought bubbles,
-- vlog: short suspenseful observation edit.
-
-Key files:
-
-- `cat_diary_story_v1.md`
-- `cat_pov_highlights_v1.csv`
-- `assets/cat_comic_looki_grounded_generated.png`
-- `assets/cat_vlog_contact_sheet_v1.jpg`
-- `assets/cat_vlog_story_v1.mp4`
-- `cat_pov_self_evaluation_v1.md`
-
-Additional local CatCam iterations were tested with longer academic-use-only cat-mounted videos from Zenodo. Those derived media are not committed because the dataset is CC BY-NC / academic use only, but the converter, v2 cat builder, and source notes are included so the workflow can be repeated with licensed material.
 
 ## Safety and Licensing
 

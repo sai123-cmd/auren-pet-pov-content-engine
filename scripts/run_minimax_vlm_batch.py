@@ -121,13 +121,7 @@ Example shape: {{"scene":["河边沙滩"],"visible_subjects":["water","human"],"
 
 
 def profile_schema(profile: str) -> dict[str, list[str]]:
-    base_subjects = ["owner", "human", "dog", "cat", "animal", "water", "grass", "brush", "toy", "food", "ground", "building", "vehicle", "unknown"]
-    if profile == "cat":
-        return {
-            "visible_subjects": base_subjects + ["window", "shelf", "fence", "tree", "prey", "bird", "rodent", "litter_box", "scratching_post"],
-            "pet_action": ["walk", "creep", "stalk", "sniff", "search", "look_around", "look_up", "hide", "perch", "climb", "jump", "pause_observe", "approach_human", "approach_animal", "unclear"],
-            "pet_event": ["ground_patrol", "prey_track", "brush_inspection", "threshold_pause", "sudden_attention", "window_watch", "perch_or_climb", "owner_check_in", "quiet_observation", "new_scene_discovery", "sound_triggered_attention", "low_signal"],
-        }
+    base_subjects = ["owner", "human", "dog", "animal", "water", "grass", "brush", "toy", "food", "ground", "building", "vehicle", "unknown"]
     if profile == "dog":
         return {
             "visible_subjects": base_subjects + ["leash", "river", "stick", "ball", "trail", "bench"],
@@ -249,32 +243,6 @@ def normalize_profile_labels(profile: str, field: str, value: str, context: str)
     exact = [label for label in schema if label in value_text]
     if exact:
         return dedupe(exact)[:3]
-    if profile == "cat":
-        if field == "pet_action":
-            rules = [
-                ("look_up", ["look up", "looking up", "upward", "sky"]),
-                ("hide", ["hide", "hidden", "obscured", "under", "behind"]),
-                ("stalk", ["stalk", "prey", "rodent", "small animal", "tracking"]),
-                ("search", ["inspect", "search", "sniff", "brush", "hay", "straw", "grass"]),
-                ("creep", ["slow", "creep", "low", "through grass", "undergrowth"]),
-                ("walk", ["walk", "walking", "moving forward", "moves forward", "traversing"]),
-                ("look_around", ["look around", "turn", "pan", "scanning", "observe"]),
-                ("pause_observe", ["pause", "static", "quiet observation", "stabilizes"]),
-                ("approach_human", ["person", "human", "owner", "legs", "feet"]),
-                ("approach_animal", ["animal", "dog", "cat", "rodent", "bird"]),
-            ]
-        else:
-            rules = [
-                ("prey_track", ["prey", "rodent", "small animal", "animal interaction", "hidden movement"]),
-                ("brush_inspection", ["brush", "hay", "straw", "dry grass", "undergrowth", "foliage"]),
-                ("threshold_pause", ["building", "post", "paved", "edge", "boundary", "courtyard"]),
-                ("sudden_attention", ["quick turn", "sudden", "look up", "upward", "new view"]),
-                ("ground_patrol", ["gravel", "rocks", "stones", "ground", "field rows", "walking"]),
-                ("owner_check_in", ["owner", "person", "human", "legs", "feet"]),
-                ("quiet_observation", ["quiet", "observe", "observation", "static", "pauses"]),
-                ("new_scene_discovery", ["new scene", "discover", "reveal", "clearing", "wide-angle"]),
-            ]
-        return labels_from_rules(rules, combined)[:3]
     if profile == "dog":
         if field == "pet_action":
             rules = [

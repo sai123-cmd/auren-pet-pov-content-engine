@@ -120,8 +120,8 @@ def classify_subjects(f: dict[str, float], name: str) -> list[str]:
         labels.append("camera_blockage")
     if "主人" in name or "owner" in name.lower():
         labels.append("owner_or_handler_likely")
-    if "猫" in name or "cat" in name.lower():
-        labels.append("cat_or_animal_likely")
+    if "animal" in name.lower():
+        labels.append("animal_likely")
     if "lake" in name.lower() or "river" in name.lower() or f["lower_blue_ratio"] > 0.18:
         labels.append("water")
     if f["green_ratio"] > 0.22:
@@ -142,7 +142,7 @@ def classify_action(f: dict[str, float], name: str, scene: list[str], subjects: 
             labels.append("sniff_or_search_close")
     if "owner_or_handler_likely" in subjects:
         labels.append("watch_or_follow_human")
-    if "cat_or_animal_likely" in subjects:
+    if "animal_likely" in subjects:
         labels.append("animal_interaction")
     if f["motion"] > 0.74:
         labels.append("quick_move_or_turn")
@@ -201,7 +201,7 @@ def semantic_score(scene: list[str], subjects: list[str], action: list[str], eve
     }
     score += min(len(set(event) & meaningful_events) * 0.20, 0.55)
     score += 0.14 if any(x in scene for x in ["water_edge_or_water_surface", "grass_bush_or_park", "beach"]) else 0.05
-    score += 0.12 if any(x in subjects for x in ["owner_or_handler_likely", "cat_or_animal_likely", "grass_or_bush", "water"]) else 0.0
+    score += 0.12 if any(x in subjects for x in ["owner_or_handler_likely", "animal_likely", "grass_or_bush", "water"]) else 0.0
     score += 0.12 if any(x in action for x in ["sniff_grass_or_bush", "sniff_or_search_close", "water_play_or_swim", "animal_interaction"]) else 0.0
     return clamp(score)
 
@@ -313,7 +313,7 @@ searching, pausing, and reacting to sound.
 ## Fields
 
 - `scene_v2`: visual environment, such as `water_edge_or_water_surface`, `grass_bush_or_park`, `beach`, `pavement_or_open_ground`.
-- `visible_subjects_v2`: likely visible/expected subjects, such as `dog_muzzle_or_head`, `owner_or_handler_likely`, `cat_or_animal_likely`, `water`, `grass_or_bush`.
+- `visible_subjects_v2`: likely visible/expected subjects, such as `dog_muzzle_or_head`, `owner_or_handler_likely`, `animal_likely`, `water`, `grass_or_bush`.
 - `pet_action_v2`: observable behavior, such as `water_play_or_swim`, `sniff_grass_or_bush`, `sniff_or_search_close`, `watch_or_follow_human`, `animal_interaction`, `quick_move_or_turn`, `pause_observe`.
 - `pet_event_v2`: narrative interaction, such as `water_adventure`, `grass_exploration`, `search_or_inspect`, `human_connection`, `animal_social_moment`, `quiet_observation`, `new_scene_discovery`.
 - `vlog_score`: favors rhythm, motion, scene transitions, ambient energy.
@@ -323,7 +323,7 @@ searching, pausing, and reacting to sound.
 ## Known Limitation
 
 V2 is still heuristic. It uses filename hints and visual/audio features. Real
-owner/cat/dog/object recognition needs a vision-language model pass and human
+owner/dog/animal/object recognition needs a vision-language model pass and human
 correction.
 """
     (out_dir / "LABEL_TAXONOMY_V2.md").write_text(text, encoding="utf-8")

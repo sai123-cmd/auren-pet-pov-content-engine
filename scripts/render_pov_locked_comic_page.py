@@ -3,7 +3,7 @@
 
 This renderer intentionally preserves each source frame's camera angle,
 composition, occlusion, and subject scale. It can stylize the pixels and add
-short pet-thought bubbles, but it must not add a recurring cat avatar, ears,
+short pet-thought bubbles, but it must not add a recurring pet avatar, ears,
 face, paws, or a third-person camera unless those are already visible in the
 source frame.
 """
